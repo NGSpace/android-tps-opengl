@@ -37,8 +37,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "MyGLRenderer";
     public Shape triangle;
-    private Sprite smiley;
-    private Sprite background;
+    public Sprite smiley;
+    public Sprite background;
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
@@ -60,9 +60,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         Atlas.loadTextures(context);
 
         triangle = new Triangle();
-//        smiley = new Sprite(context, R.drawable.simley, 0, 0, 2, 1);
+        smiley = new Sprite(context, Atlas.simley, -2, 0, 2, 1);
 //        smiley.bounds(0, 0, 2, 1);
-        background = new Sprite(context, Atlas.simley, 0.0f, -1f, 2, 2f);
+        background = new Sprite(context, Atlas.fuckopengl, 0.0f, -1f, 2, 2f);
 //        background.bounds(-1, 0, 30, 1);
     }
 
@@ -80,7 +80,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         // Draw square
         background.draw(mMVPMatrix);
-//        smiley.draw(mMVPMatrix);
+        smiley.draw(mMVPMatrix);
 
         // Draw triangle
         //triangle.draw(mMVPMatrix);

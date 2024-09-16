@@ -10,13 +10,16 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-public class Sprite implements Shape
-{
+public class Sprite implements Shape {
+
+    public float angle = 0;
+
+
     //Reference to Activity Context
     private final Context mActivityContext;
 
     //Added for Textures
-    private final FloatBuffer mCubeTextureCoordinates;
+    private FloatBuffer mCubeTextureCoordinates;
     private int mTextureUniformHandle;
     private int mTextureCoordinateHandle;
     private final int mTextureCoordinateDataSize = 2;
@@ -102,12 +105,11 @@ void main() {
 
         // Cover all parts of the cube.
         float fl = 800/Atlas.width;
-        float st = fl+ ((-atlasId)/(-Atlas.length))-(1f/Atlas.length);
-        Log.i("NGSPACEly", st + " " + Atlas.width + " " + atlasId);
+        float st = ((atlasId)/(Atlas.length));
         float[] cubeTextureCoordinateData = {
                 st, 1f,
-                st-fl, 1f,
-                st-fl, 0f,
+                st+fl, 1f,
+                st+fl, 0f,
                 st, 0f,
         };
 //        cubeTextureCoordinateData = new float[]{
@@ -128,7 +130,7 @@ void main() {
         float[] scratch = new float[16];
 
 
-        Matrix.setRotateM(mRotationMatrix, 0, 0, 0, 0, 1.0f);
+        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, 1.0f);
 
         Matrix.multiplyMM(scratch, 0, mvpMatrix, 0, mRotationMatrix, 0);
 
@@ -180,18 +182,19 @@ void main() {
         //Disable Vertex Array
         GLES30.glDisableVertexAttribArray(mPositionHandle);
     }
-
-    @Override
-    public void touch(float x, float y) {
-
+    int w = 2;
+    @Override  public void touch(float x, float y) {
+        w=0;
+        bounds( 0.0f, -1f, 4, 2f);
     }
 
     public void bounds(float x, float y, float width, float height) {
+        x=2-x;
+
         spriteCoords = new float[] {x, y,   // top left
-                x+width, y,   // bottom left
-                x+width, y+height,   // bottom right
+                x-width, y,   // bottom left
+                x-width, y+height,   // bottom right
                 x, y+height}; //top right
-        Log.i("NGSPACEly", x+" "+y + " " + width);
         //Initialize Vertex Byte Buffer for Shape Coordinates / # of coordinate values * 4 bytes per float
         ByteBuffer bb = ByteBuffer.allocateDirect(spriteCoords.length * 4);
         //Use the Device's Native Byte Order

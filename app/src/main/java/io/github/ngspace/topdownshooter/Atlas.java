@@ -17,8 +17,11 @@ public class Atlas {
     public static int textureDataHandle;
 
     public static final float simley = 0;
+    public static final float fedora = 1;
+    public static final float starset = 2;
+    public static final float fuckopengl = 3;
 
-    static String[] drawables = {"simley", "fedora", "starset"};
+    static String[] drawables = {"simley", "fedora", "starset", "fuckopengl"};
     public static int length = drawables.length;
 
     public static int GetImage(Context c, String ImageName) {
@@ -43,9 +46,9 @@ public class Atlas {
 //            bmp.setPixel(1,0,Color.BLUE);
 //            bmp.setPixel(1,1,Color.RED);
             for (int i = 0;i<drawables.length;i++) {
-                Log.i("NGSPACEly",drawables[i]+"");
                 Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), GetImage(context,drawables[i]), options);
                 canvas.drawBitmap(bitmap, null, new Rect(800*i,0, (int)800*i+800, (int) height), null);
+                bitmap.recycle();
             }
 //bmp=bitmap;
             // Bind to the texture in OpenGL
