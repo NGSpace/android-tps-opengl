@@ -57,10 +57,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Set the background frame color
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
+        Atlas.loadTextures(context);
+
         triangle = new Triangle();
-        smiley = new Sprite(context, R.drawable.simley, 0, 0, 2, 1);
+//        smiley = new Sprite(context, R.drawable.simley, 0, 0, 2, 1);
 //        smiley.bounds(0, 0, 2, 1);
-        background = new Sprite(context, R.drawable.simley, 0.0f, -1f, 2, 2f);
+        background = new Sprite(context, Atlas.simley, 0.0f, -1f, 2, 2f);
 //        background.bounds(-1, 0, 30, 1);
     }
 

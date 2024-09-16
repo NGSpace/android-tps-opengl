@@ -1,13 +1,7 @@
 package io.github.ngspace.topdownshooter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Rect;
 import android.opengl.GLES30;
-import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.Log;
 
@@ -26,7 +20,7 @@ public class Sprite implements Shape
     private int mTextureUniformHandle;
     private int mTextureCoordinateHandle;
     private final int mTextureCoordinateDataSize = 2;
-    private int mTextureDataHandle;
+    private static int mTextureDataHandle;
 
     private final String vertexShaderCode = """
 attribute vec2 a_TexCoordinate;
@@ -67,7 +61,7 @@ void main() {
     private short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; //Order to draw vertices
     private final int vertexStride = COORDS_PER_VERTEX * 4; //Bytes per vertex
 
-    public Sprite(Context context, int resourceId, float x, float y, float width, float height) {
+    public Sprite(Context context, float atlasId, float x, float y, float width, float height) {
 
         bounds(x,y,width,height);
 
@@ -104,17 +98,24 @@ void main() {
         GLES30.glLinkProgram(shaderProgram);
 
         //Load the texture
-        mTextureDataHandle = loadTexture(mActivityContext, resourceId);
+        mTextureDataHandle = Atlas.textureDataHandle;
 
         // Cover all parts of the cube.
-        float fl = 2/w;
-        float st = 0f-3f/w;
+        float fl = 800/Atlas.width;
+        float st = fl+ ((-atlasId)/(-Atlas.length))-(1f/Atlas.length);
+        Log.i("NGSPACEly", st + " " + Atlas.width + " " + atlasId);
         float[] cubeTextureCoordinateData = {
-                st-fl, 1f,
                 st, 1f,
-                st, 0f,
+                st-fl, 1f,
                 st-fl, 0f,
+                st, 0f,
         };
+//        cubeTextureCoordinateData = new float[]{
+//                1f, 1f,
+//                0f, 1f,
+//                0f, 0f,
+//                1f, 0f,
+//        };
 
         mCubeTextureCoordinates = ByteBuffer.allocateDirect(cubeTextureCoordinateData.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         mCubeTextureCoordinates.put(cubeTextureCoordinateData).position(0);
@@ -178,54 +179,6 @@ void main() {
 
         //Disable Vertex Array
         GLES30.glDisableVertexAttribArray(mPositionHandle);
-    }
-
-    public static int loadTexture(Context context, int resourceId)
-    {
-        final int[] textureHandle = new int[1];
-        GLES30.glGenTextures(1, textureHandle, 0);
-
-        if (textureHandle[0] != 0)
-        {
-
-//            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inScaled = true;   // No pre-scaling
-//
-//            // Read in the resource
-//            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
-
-            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-            Bitmap bmp = Bitmap.createBitmap((int) w, (int) h, conf); // this creates a MUTABLE bitmap
-            Canvas canvas = new Canvas(bmp);
-            bmp.setPixel(0,0,Color.RED);
-            bmp.setPixel(0,1,Color.BLUE);
-            bmp.setPixel(1,0,Color.BLUE);
-            bmp.setPixel(1,1,Color.RED);
-//            canvas.drawPicture(MyBitmap, new Rect(0,0,100,100), rectangle, null);
-
-
-            // Bind to the texture in OpenGL
-            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle[0]);
-
-            // Set filtering
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
-//            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-//            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
-
-            // Load the bitmap into the bound texture.
-            GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bmp, 0);
-
-            // Recycle the bitmap, since its data has been loaded into OpenGL.
-            bmp.recycle();
-        }
-
-        if (textureHandle[0] == 0)
-        {
-            throw new RuntimeException("Error loading texture.");
-        }
-
-        return textureHandle[0];
     }
 
     @Override
