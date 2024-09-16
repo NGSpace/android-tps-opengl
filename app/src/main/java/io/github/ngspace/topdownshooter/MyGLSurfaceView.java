@@ -31,7 +31,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     public MyGLSurfaceView(Context context) {
         super(context);
 
-        // Create an OpenGL ES 2.0 context.  CHANGED to 3.0  JW.
+        // Create an OpenGL ES 3.0 context.
         setEGLContextClientVersion(3);
         //fix for error No Config chosen, but I don't know what this does.
         super.setEGLConfigChooser(8 , 8, 8, 8, 16, 0);

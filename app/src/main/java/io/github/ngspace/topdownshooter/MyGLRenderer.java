@@ -58,10 +58,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         triangle = new Triangle();
-        smiley = new Sprite(context, R.drawable.simley);
-        smiley.bounds(0, 0, 1, 1);
-        background = new Sprite(context, R.drawable.simley);
-        background.bounds(0, 0, 2, 1);
+        smiley = new Sprite(context, R.drawable.simley, 0, 0, 2, 1);
+//        smiley.bounds(0, 0, 2, 1);
+        background = new Sprite(context, R.drawable.simley, 0.0f, -1f, 2, 2f);
+//        background.bounds(-1, 0, 30, 1);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         // Draw square
         background.draw(mMVPMatrix);
-        smiley.draw(mMVPMatrix);
+//        smiley.draw(mMVPMatrix);
 
         // Draw triangle
         //triangle.draw(mMVPMatrix);

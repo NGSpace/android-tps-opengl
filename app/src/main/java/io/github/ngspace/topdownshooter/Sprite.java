@@ -3,9 +3,13 @@ package io.github.ngspace.topdownshooter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.opengl.GLES30;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -47,15 +51,15 @@ void main() {
     public float alpha = 1f;
 
     private final int shaderProgram;
-    private final FloatBuffer vertexBuffer;
+    private FloatBuffer vertexBuffer;
     private final ShortBuffer drawListBuffer;
     private int mPositionHandle;
     private int mColorHandle;
     private int mMVPMatrixHandle;
 
     // number of coordinates per vertex in this array
-    static final int COORDS_PER_VERTEX = 2;
-    static float spriteCoords[] = { -0.5f,  0.5f,   // top left
+    final int COORDS_PER_VERTEX = 2;
+    float spriteCoords[] = { -0.5f,  0.5f,   // top left
             -0.5f, -0.5f,   // bottom left
             0.5f, -0.5f,   // bottom right
             0.5f,  0.5f }; //top right
@@ -63,8 +67,10 @@ void main() {
     private short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; //Order to draw vertices
     private final int vertexStride = COORDS_PER_VERTEX * 4; //Bytes per vertex
 
-    public Sprite(Context context, int resourceId)
-    {
+    public Sprite(Context context, int resourceId, float x, float y, float width, float height) {
+
+        bounds(x,y,width,height);
+
         mActivityContext = context;
 
         //Initialize Vertex Byte Buffer for Shape Coordinates / # of coordinate values * 4 bytes per float
@@ -77,12 +83,6 @@ void main() {
         vertexBuffer.put(spriteCoords);
         //Set the Buffer to Read the first coordinate
         vertexBuffer.position(0);
-
-        // Cover all parts of the cube.
-        final float[] cubeTextureCoordinateData = {0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f};
-
-        mCubeTextureCoordinates = ByteBuffer.allocateDirect(cubeTextureCoordinateData.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mCubeTextureCoordinates.put(cubeTextureCoordinateData).position(0);
 
         //Initialize byte buffer for the draw list
         ByteBuffer dlb = ByteBuffer.allocateDirect(spriteCoords.length * 2);
@@ -105,6 +105,19 @@ void main() {
 
         //Load the texture
         mTextureDataHandle = loadTexture(mActivityContext, resourceId);
+
+        // Cover all parts of the cube.
+        float fl = 2/w;
+        float st = 0f-3f/w;
+        float[] cubeTextureCoordinateData = {
+                st-fl, 1f,
+                st, 1f,
+                st, 0f,
+                st-fl, 0f,
+        };
+
+        mCubeTextureCoordinates = ByteBuffer.allocateDirect(cubeTextureCoordinateData.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mCubeTextureCoordinates.put(cubeTextureCoordinateData).position(0);
     }
 
     public void draw(float[] mvpMatrix)
@@ -114,7 +127,7 @@ void main() {
         float[] scratch = new float[16];
 
 
-        Matrix.setRotateM(mRotationMatrix, 0, -90, 0, 0, 1.0f);
+        Matrix.setRotateM(mRotationMatrix, 0, 0, 0, 0, 1.0f);
 
         Matrix.multiplyMM(scratch, 0, mvpMatrix, 0, mRotationMatrix, 0);
 
@@ -141,7 +154,7 @@ void main() {
         mTextureCoordinateHandle = GLES30.glGetAttribLocation(shaderProgram, "a_TexCoordinate");
 
         //Set the active texture unit to texture unit 0.
-        GLES30.glActiveTexture(GLES30.GL_TEXTURE0       );
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
 
         //Bind the texture to this unit.
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureDataHandle);
@@ -167,18 +180,29 @@ void main() {
         GLES30.glDisableVertexAttribArray(mPositionHandle);
     }
 
-
     public static int loadTexture(Context context, int resourceId)
     {
         final int[] textureHandle = new int[1];
         GLES30.glGenTextures(1, textureHandle, 0);
+
         if (textureHandle[0] != 0)
         {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = true;   // No pre-scaling
 
-            // Read in the resource
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inScaled = true;   // No pre-scaling
+//
+//            // Read in the resource
+//            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
+
+            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+            Bitmap bmp = Bitmap.createBitmap((int) w, (int) h, conf); // this creates a MUTABLE bitmap
+            Canvas canvas = new Canvas(bmp);
+            bmp.setPixel(0,0,Color.RED);
+            bmp.setPixel(0,1,Color.BLUE);
+            bmp.setPixel(1,0,Color.BLUE);
+            bmp.setPixel(1,1,Color.RED);
+//            canvas.drawPicture(MyBitmap, new Rect(0,0,100,100), rectangle, null);
+
 
             // Bind to the texture in OpenGL
             GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle[0]);
@@ -190,10 +214,10 @@ void main() {
 //            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
 
             // Load the bitmap into the bound texture.
-            GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0);
+            GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bmp, 0);
 
             // Recycle the bitmap, since its data has been loaded into OpenGL.
-            bitmap.recycle();
+            bmp.recycle();
         }
 
         if (textureHandle[0] == 0)
@@ -210,9 +234,20 @@ void main() {
     }
 
     public void bounds(float x, float y, float width, float height) {
-        spriteCoords = new float[] {x, 0.5f,   // top left
-                x, -0.5f,   // bottom left
-                x+width, -0.5f,   // bottom right
-                x+width, 0.5f}; //top right
+        spriteCoords = new float[] {x, y,   // top left
+                x+width, y,   // bottom left
+                x+width, y+height,   // bottom right
+                x, y+height}; //top right
+        Log.i("NGSPACEly", x+" "+y + " " + width);
+        //Initialize Vertex Byte Buffer for Shape Coordinates / # of coordinate values * 4 bytes per float
+        ByteBuffer bb = ByteBuffer.allocateDirect(spriteCoords.length * 4);
+        //Use the Device's Native Byte Order
+        bb.order(ByteOrder.nativeOrder());
+        //Create a floating point buffer from the ByteBuffer
+        vertexBuffer = bb.asFloatBuffer();
+        //Add the coordinates to the FloatBuffer
+        vertexBuffer.put(spriteCoords);
+        //Set the Buffer to Read the first coordinate
+        vertexBuffer.position(0);
     }
 }
