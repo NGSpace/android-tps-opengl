@@ -17,6 +17,7 @@ package io.github.ngspace.topdownshooter;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.MotionEvent;
 
 /**
@@ -52,10 +53,13 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
-
+        if (e.getAction()==MotionEvent.ACTION_UP) {
+            Log.i("NGSPACEly", "UP EV");
+            return true;
+        }
         float x = e.getX();
         float y = e.getY();
-//        mRenderer.background.touch(x, y);
+        mRenderer.elements.get(0).touch(x, y);
         return true;
     }
 

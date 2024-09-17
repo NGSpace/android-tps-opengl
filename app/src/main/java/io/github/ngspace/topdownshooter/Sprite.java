@@ -1,8 +1,11 @@
 package io.github.ngspace.topdownshooter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
@@ -113,9 +116,22 @@ void main() {
         mCubeTextureCoordinates = ByteBuffer.allocateDirect(texture.textureCoordinate.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
         mCubeTextureCoordinates.put(texture.textureCoordinate).position(0);
     }
+    float x, y, width, height;
 
-    public void draw(float[] mvpMatrix)
-    {
+    float velx = 0;
+
+    public void draw(float[] mvpMatrix) {
+//
+        this.x = this.x + velx;
+        if (velx>0) {
+            velx-=.1;
+            if (velx<0) velx = 0;
+        } else {
+            velx+=.1;
+            if (velx>0) velx = 0;
+        }
+
+        bounds(this.x, this.y, width, height);
 
         final float[] mRotationMatrix = new float[16];
         float[] scratch = new float[16];
@@ -155,7 +171,7 @@ void main() {
         //Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
         GLES30.glUniform1i(mTextureUniformHandle, 0);
 
-        //Pass in the texture coordinate information
+        //Pass in the texture coordinate information    
         mCubeTextureCoordinates.position(0);
         GLES30.glVertexAttribPointer(mTextureCoordinateHandle, 2, GLES30.GL_FLOAT, false, 0, mCubeTextureCoordinates);
         GLES30.glEnableVertexAttribArray(mTextureCoordinateHandle);
@@ -172,16 +188,35 @@ void main() {
         //Disable Vertex Array
         GLES30.glDisableVertexAttribArray(mPositionHandle);
     }
+
     @Override  public void touch(float x, float y) {
+        float clickx = (x/OpenGLActivity.realWidth*4+0.125f)-2f;
+        float clicky = (y/OpenGLActivity.realHeight*2);
+
+//        bounds(x/OpenGLActivity.realWidth*4-0.125f      ,y/OpenGLActivity.realHeight*2-.25f, .5f, .5f);
+//        float hyp = (float) Math.sqrt(Math.pow(this.x-clickx,2) + Math.pow(this.y-clicky,2));
+
+//        angle = (float) Math.acos(hyp);
+
+        velx = clickx;
+        Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
+
+//        bounds(newx, this.y, width, height);
+
+
     }
 
     public void bounds(float x, float y, float width, float height) {
-        x=2-x;
-        y=1-y;
-        spriteCoords = new float[] {x, y-height,   // top left
-                x-width, y-height,   // bottom left
-                x-width, y,   // bottom right
-                x, y}; //top right
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        float realx = 2f - x;
+        float realy = 1f - y;
+        spriteCoords = new float[] {realx, realy-height,   // top left
+                realx-width, realy-height,   // bottom left
+                realx-width, realy,   // bottom right
+                realx, realy}; //top right
         //Initialize Vertex Byte Buffer for Shape Coordinates / # of coordinate values * 4 bytes per float
         ByteBuffer bb = ByteBuffer.allocateDirect(spriteCoords.length * 4);
         //Use the Device's Native Byte Order

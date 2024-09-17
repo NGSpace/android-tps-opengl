@@ -51,10 +51,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
 //        GLES30.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
-        elements.add(new Sprite(Textures.FUCKOPENGL, 0, 0, 4, 2f));
-        elements.add(new Sprite(Textures.SIMLEY, 2-(1.25f/2), 2-1.25f, 1.25f, 1.25f));
-        elements.add(new Sprite(Textures.FEDORA, 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
-        elements.add(new Sprite(Textures.STARSET, 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
+        elements.add(new Sprite(Textures.FUCKOPENGL, 2-.25f, 1-.25f,.5f, .5f));
+//        elements.add(new Sprite(Textures.SIMLEY, 2-(1.25f/2), 2-1.25f, 1.25f, 1.25f));
+//        elements.add(new Sprite(Textures.FEDORA, 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
+//        elements.add(new Sprite(Textures.STARSET, 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
 //        elements.add(new Sprite(Textures.SIMLEY, 1, 0, 2, 2f));
 //        elements.add(new Sprite(Textures.SIMLEY, 1, 0, 2, 2f));
 //        elements.add(new Sprite(Textures.FEDORA, 1.0f, -1f, 2, 2f));
