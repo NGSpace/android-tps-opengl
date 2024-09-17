@@ -24,6 +24,9 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Provides drawing instructions for a GLSurfaceView object. This class
  * must override the OpenGL ES drawing lifecycle methods:
@@ -36,35 +39,32 @@ import android.util.Log;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "MyGLRenderer";
-    public Shape triangle;
-    public Sprite smiley;
-    public Sprite background;
+//    public Sprite smiley;
+//    public Sprite background;
+
+    List<Shape> elements = new ArrayList<Shape>();
+
+    private float mAngle;
+    Context context;
+    public MyGLRenderer(MyGLSurfaceView myGLSurfaceView) {this.context = myGLSurfaceView.getContext();}
+
+    @Override
+    public void onSurfaceCreated(GL10 unused, EGLConfig config) {
+//        GLES30.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
+        elements.add(new Sprite(Textures.FUCKOPENGL, 0, 0, 4, 2f));
+        elements.add(new Sprite(Textures.SIMLEY, 2-(1.25f/2), 2-1.25f, 1.25f, 1.25f));
+        elements.add(new Sprite(Textures.FEDORA, 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
+        elements.add(new Sprite(Textures.STARSET, 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
+//        elements.add(new Sprite(Textures.SIMLEY, 1, 0, 2, 2f));
+//        elements.add(new Sprite(Textures.SIMLEY, 1, 0, 2, 2f));
+//        elements.add(new Sprite(Textures.FEDORA, 1.0f, -1f, 2, 2f));
+//        elements.add(new Sprite(Textures.SIMLEY, 0.5f, -0.0f, 2, 2f));
+    }
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
-
-    private float mAngle;
-    Context context;
-    public MyGLRenderer(MyGLSurfaceView myGLSurfaceView) {
-        this.context = myGLSurfaceView.getContext();
-    }
-
-    @Override
-    public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-
-        // Set the background frame color
-        GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-        Atlas.loadTextures(context);
-
-        triangle = new Triangle();
-        smiley = new Sprite(context, Atlas.simley, -2, 0, 2, 1);
-//        smiley.bounds(0, 0, 2, 1);
-        background = new Sprite(context, Atlas.fuckopengl, 0.0f, -1f, 2, 2f);
-//        background.bounds(-1, 0, 30, 1);
-    }
 
     @Override
     public void onDrawFrame(GL10 unused) {
@@ -72,18 +72,23 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Draw background color
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
 
+        GLES30.glEnable(GLES30.GL_BLEND);
+        GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA);
+
         // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
-        // Draw square
-        background.draw(mMVPMatrix);
-        smiley.draw(mMVPMatrix);
+        // Draw
 
-        // Draw triangle
-        //triangle.draw(mMVPMatrix);
+        for (Shape shape : elements) {
+            shape.draw(mMVPMatrix);
+        }
+
+//        smiley.draw(mMVPMatrix);
+//        background.draw(mMVPMatrix);
     }
 
     @Override

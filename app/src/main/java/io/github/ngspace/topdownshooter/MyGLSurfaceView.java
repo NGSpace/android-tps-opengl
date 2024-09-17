@@ -55,7 +55,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
         float x = e.getX();
         float y = e.getY();
-        mRenderer.background.touch(x, y);
+//        mRenderer.background.touch(x, y);
         return true;
     }
 

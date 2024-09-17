@@ -12,18 +12,13 @@ import java.nio.ShortBuffer;
 
 public class Sprite implements Shape {
 
+    private final TextureInfo texture;
     public float angle = 0;
-
-
-    //Reference to Activity Context
-    private final Context mActivityContext;
 
     //Added for Textures
     private FloatBuffer mCubeTextureCoordinates;
     private int mTextureUniformHandle;
     private int mTextureCoordinateHandle;
-    private final int mTextureCoordinateDataSize = 2;
-    private static int mTextureDataHandle;
 
     private final String vertexShaderCode = """
 attribute vec2 a_TexCoordinate;
@@ -37,13 +32,40 @@ void main() {
 """;
 
     private final String fragmentShaderCode =
-            "precision mediump float;" +
-                    "uniform float vAlpha;" +
-                    "uniform sampler2D u_Texture;" +
-                    "varying vec2 v_TexCoordinate;" +
-                    "void main() {" +
-                    "gl_FragColor = vAlpha * texture2D(u_Texture, v_TexCoordinate);" +
-                    "}";
+//            "precision mediump float;" +
+//                    "uniform float vAlpha;" +
+//                    "uniform sampler2D u_Texture;" +
+//                    "varying vec2 v_TexCoordinate;" +
+//                    "void main() {" +
+//                    "gl_FragColor = texture2D(u_Texture, v_TexCoordinate);" +
+//                    "if (gl_FragColor.a == 0.0) {\n" +
+//                    "    discard;\n" +
+//                    "}\n" +
+//                    "}";
+"""
+
+precision mediump float;
+uniform float vAlpha;
+uniform sampler2D u_Texture;
+varying vec2 v_TexCoordinate;
+
+void main() {
+//    vec4 color = texture2D(u_Texture, v_TexCoordinate);
+//    if (color.w < 1.0) {
+//        gl_FragColor = vec4(1,0,0,1);
+//    } else {
+//        gl_FragColor = vec4(0,1,0,1);
+//    }
+//    gl_FragColor = texture2D(u_Texture, v_TexCoordinate);
+//    if (gl_FragColor.a == 0.0) {
+//        discard;
+//    }
+
+    vec4 texColor = texture2D(u_Texture, v_TexCoordinate);
+//    if(texColor.a < 0.1) discard;
+    gl_FragColor = texColor;
+}
+""";
 
     public float alpha = 1f;
 
@@ -64,22 +86,8 @@ void main() {
     private short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; //Order to draw vertices
     private final int vertexStride = COORDS_PER_VERTEX * 4; //Bytes per vertex
 
-    public Sprite(Context context, float atlasId, float x, float y, float width, float height) {
-
+    public Sprite(TextureInfo texture, float x, float y, float width, float height) {
         bounds(x,y,width,height);
-
-        mActivityContext = context;
-
-        //Initialize Vertex Byte Buffer for Shape Coordinates / # of coordinate values * 4 bytes per float
-        ByteBuffer bb = ByteBuffer.allocateDirect(spriteCoords.length * 4);
-        //Use the Device's Native Byte Order
-        bb.order(ByteOrder.nativeOrder());
-        //Create a floating point buffer from the ByteBuffer
-        vertexBuffer = bb.asFloatBuffer();
-        //Add the coordinates to the FloatBuffer
-        vertexBuffer.put(spriteCoords);
-        //Set the Buffer to Read the first coordinate
-        vertexBuffer.position(0);
 
         //Initialize byte buffer for the draw list
         ByteBuffer dlb = ByteBuffer.allocateDirect(spriteCoords.length * 2);
@@ -97,30 +105,13 @@ void main() {
 
         //Texture Code
         GLES30.glBindAttribLocation(shaderProgram, 0, "a_TexCoordinate");
-
         GLES30.glLinkProgram(shaderProgram);
 
         //Load the texture
-        mTextureDataHandle = Atlas.textureDataHandle;
+        this.texture = texture;
 
-        // Cover all parts of the cube.
-        float fl = 800/Atlas.width;
-        float st = ((atlasId)/(Atlas.length));
-        float[] cubeTextureCoordinateData = {
-                st, 1f,
-                st+fl, 1f,
-                st+fl, 0f,
-                st, 0f,
-        };
-//        cubeTextureCoordinateData = new float[]{
-//                1f, 1f,
-//                0f, 1f,
-//                0f, 0f,
-//                1f, 0f,
-//        };
-
-        mCubeTextureCoordinates = ByteBuffer.allocateDirect(cubeTextureCoordinateData.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mCubeTextureCoordinates.put(cubeTextureCoordinateData).position(0);
+        mCubeTextureCoordinates = ByteBuffer.allocateDirect(texture.textureCoordinate.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mCubeTextureCoordinates.put(texture.textureCoordinate).position(0);
     }
 
     public void draw(float[] mvpMatrix)
@@ -128,7 +119,6 @@ void main() {
 
         final float[] mRotationMatrix = new float[16];
         float[] scratch = new float[16];
-
 
         Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, 1.0f);
 
@@ -160,14 +150,14 @@ void main() {
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
 
         //Bind the texture to this unit.
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTextureDataHandle);
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, texture.textureDataHandle);
 
         //Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
         GLES30.glUniform1i(mTextureUniformHandle, 0);
 
         //Pass in the texture coordinate information
         mCubeTextureCoordinates.position(0);
-        GLES30.glVertexAttribPointer(mTextureCoordinateHandle, mTextureCoordinateDataSize, GLES30.GL_FLOAT, false, 0, mCubeTextureCoordinates);
+        GLES30.glVertexAttribPointer(mTextureCoordinateHandle, 2, GLES30.GL_FLOAT, false, 0, mCubeTextureCoordinates);
         GLES30.glEnableVertexAttribArray(mTextureCoordinateHandle);
 
         //Get Handle to Shape's Transformation Matrix
@@ -182,19 +172,16 @@ void main() {
         //Disable Vertex Array
         GLES30.glDisableVertexAttribArray(mPositionHandle);
     }
-    int w = 2;
     @Override  public void touch(float x, float y) {
-        w=0;
-        bounds( 0.0f, -1f, 4, 2f);
     }
 
     public void bounds(float x, float y, float width, float height) {
         x=2-x;
-
-        spriteCoords = new float[] {x, y,   // top left
-                x-width, y,   // bottom left
-                x-width, y+height,   // bottom right
-                x, y+height}; //top right
+        y=1-y;
+        spriteCoords = new float[] {x, y-height,   // top left
+                x-width, y-height,   // bottom left
+                x-width, y,   // bottom right
+                x, y}; //top right
         //Initialize Vertex Byte Buffer for Shape Coordinates / # of coordinate values * 4 bytes per float
         ByteBuffer bb = ByteBuffer.allocateDirect(spriteCoords.length * 4);
         //Use the Device's Native Byte Order

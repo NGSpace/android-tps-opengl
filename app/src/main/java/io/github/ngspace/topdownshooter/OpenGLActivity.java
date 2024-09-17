@@ -3,6 +3,7 @@ package io.github.ngspace.topdownshooter;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,5 +23,6 @@ public class OpenGLActivity extends Activity {
         // as the ContentView for this Activity.
         gLView = new MyGLSurfaceView(this);
         setContentView(gLView);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);// TODO Remove this when done debugging
     }
 }
