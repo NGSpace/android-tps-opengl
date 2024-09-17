@@ -50,11 +50,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-//        GLES30.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
-        elements.add(new Sprite(Textures.FUCKOPENGL, 2-.25f, 1-.25f,.5f, .5f));
-//        elements.add(new Sprite(Textures.SIMLEY, 2-(1.25f/2), 2-1.25f, 1.25f, 1.25f));
-//        elements.add(new Sprite(Textures.FEDORA, 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
-//        elements.add(new Sprite(Textures.STARSET, 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
+        GLES30.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
+        elements.add(new Sprite(Textures.FUCKOPENGL     , .0f,0f,4f  ,2f));//2-.25f, 1-.25f,.5f, .5f));
+        elements.add(new Sprite(Textures.SIMLEY, 2-(1.25f/2), 2-1.25f, 1.25f, 1.25f));
+        elements.add(new Sprite(Textures.FEDORA, 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
+        elements.add(new Sprite(Textures.STARSET, 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
 //        elements.add(new Sprite(Textures.SIMLEY, 1, 0, 2, 2f));
 //        elements.add(new Sprite(Textures.SIMLEY, 1, 0, 2, 2f));
 //        elements.add(new Sprite(Textures.FEDORA, 1.0f, -1f, 2, 2f));
@@ -76,11 +76,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA);
 
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0f, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.translateM(mViewMatrix, 0, -.0f, 0, 0);
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
-
         // Draw
 
         for (Shape shape : elements) {
@@ -95,9 +95,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         // Adjust the viewport based on geometry changes,
         // such as screen rotation
-        GLES30.glViewport(0, 0, width, height);
+        GLES30.glViewport(0, 0, OpenGLActivity.realWidth, OpenGLActivity.realHeight);
 
-        float ratio = (float) width / height;
+        float ratio = (float) OpenGLActivity.realWidth / OpenGLActivity.realHeight;
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method

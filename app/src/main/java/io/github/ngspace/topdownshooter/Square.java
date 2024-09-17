@@ -163,7 +163,17 @@ void main()
     }
 
     @Override
-    public void touch(float x, float y) {
+    public void touchDown(float x, float y) {
+
+    }
+
+    @Override
+    public void touchDrag(float x, float y) {
+
+    }
+
+    @Override
+    public void touchUp(float x, float y) {
 
     }
 

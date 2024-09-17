@@ -160,7 +160,7 @@ public class Triangle implements Shape {
     }
 
     @Override
-    public void touch(float x, float y) {
+    public void touchDown(float x, float y) {
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
         int height = Resources.getSystem().getDisplayMetrics().heightPixels;
 //        Log.i("NGSpace", ""+)
@@ -178,5 +178,15 @@ public class Triangle implements Shape {
 
         Log.i("NGSpace", ""+angle);
 //      Log.i("NGSpace", ""+height);
+    }
+
+    @Override
+    public void touchDrag(float x, float y) {
+
+    }
+
+    @Override
+    public void touchUp(float x, float y) {
+
     }
 }

@@ -171,7 +171,7 @@ void main() {
         //Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
         GLES30.glUniform1i(mTextureUniformHandle, 0);
 
-        //Pass in the texture coordinate information    
+        //Pass in the texture coordinate information
         mCubeTextureCoordinates.position(0);
         GLES30.glVertexAttribPointer(mTextureCoordinateHandle, 2, GLES30.GL_FLOAT, false, 0, mCubeTextureCoordinates);
         GLES30.glEnableVertexAttribArray(mTextureCoordinateHandle);
@@ -189,8 +189,16 @@ void main() {
         GLES30.glDisableVertexAttribArray(mPositionHandle);
     }
 
-    @Override  public void touch(float x, float y) {
-        float clickx = (x/OpenGLActivity.realWidth*4+0.125f)-2f;
+    float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    @Override
+    public void touchDown(float x, float y) {
+
+    }
+    @Override public void touchDrag(float x, float y) {
+        float clickx = (x/OpenGLActivity.realWidth*4+0.125f)-1f;
         float clicky = (y/OpenGLActivity.realHeight*2);
 
 //        bounds(x/OpenGLActivity.realWidth*4-0.125f      ,y/OpenGLActivity.realHeight*2-.25f, .5f, .5f);
@@ -198,11 +206,14 @@ void main() {
 
 //        angle = (float) Math.acos(hyp);
 
-        velx = clickx;
+        velx += clamp(clickx/20, -5, 5);
         Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
 
 //        bounds(newx, this.y, width, height);
+    }
 
+    @Override
+    public void touchUp(float x, float y) {
 
     }
 
