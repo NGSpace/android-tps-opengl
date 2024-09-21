@@ -121,7 +121,10 @@ void main() {
     float velx = 0;
 
     public void draw(float[] mvpMatrix) {
-//
+        if (ispressed) {
+            velx += clamp(clickx/20, -5, 5);
+            Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
+        }
         this.x = this.x + velx;
         if (velx>0) {
             velx-=.1;
@@ -131,7 +134,7 @@ void main() {
             if (velx>0) velx = 0;
         }
 
-        bounds(this.x, this.y, width, height);
+//        bounds(this.x, this.y, width, height);
 
         final float[] mRotationMatrix = new float[16];
         float[] scratch = new float[16];
@@ -192,29 +195,40 @@ void main() {
     float clamp(float value, float min, float max) {
         return Math.max(min, Math.min(max, value));
     }
-
-    @Override
-    public void touchDown(float x, float y) {
-
-    }
-    @Override public void touchDrag(float x, float y) {
-        float clickx = (x/OpenGLActivity.realWidth*4+0.125f)-1f;
-        float clicky = (y/OpenGLActivity.realHeight*2);
-
-//        bounds(x/OpenGLActivity.realWidth*4-0.125f      ,y/OpenGLActivity.realHeight*2-.25f, .5f, .5f);
-//        float hyp = (float) Math.sqrt(Math.pow(this.x-clickx,2) + Math.pow(this.y-clicky,2));
-
-//        angle = (float) Math.acos(hyp);
-
-        velx += clamp(clickx/20, -5, 5);
-        Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
-
-//        bounds(newx, this.y, width, height);
-    }
+    float clickx, clicky; boolean ispressed = false;
 
     @Override
     public void touchUp(float x, float y) {
+        ispressed = false;
+    }
 
+    @Override
+    public void touchDown(float x, float y) {
+        ispressed = true;
+        clickx = (x/OpenGLActivity.realWidth*4+0.125f)-1f;
+        clicky = (y/OpenGLActivity.realHeight*2);
+
+        velx += clamp(clickx/20, -5, 5);
+        Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
+    }
+    @Override public void touchDrag(float x, float y) {
+        clickx = (x/OpenGLActivity.realWidth*4+0.125f)-1f;
+        clicky = (y/OpenGLActivity.realHeight*2);
+
+        velx += clamp(clickx/20, -5, 5);
+        Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
+//        clickx = (x/OpenGLActivity.realWidth*4+0.125f)-1f;
+//        clicky = (y/OpenGLActivity.realHeight*2);
+//
+////        bounds(x/OpenGLActivity.realWidth*4-0.125f      ,y/OpenGLActivity.realHeight*2-.25f, .5f, .5f);
+////        float hyp = (float) Math.sqrt(Math.pow(this.x-clickx,2) + Math.pow(this.y-clicky,2));
+//
+////        angle = (float) Math.acos(hyp);
+//
+//        velx += clamp(clickx/20, -5, 5);
+//        Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
+
+//        bounds(newx, this.y, width, height);
     }
 
     public void bounds(float x, float y, float width, float height) {

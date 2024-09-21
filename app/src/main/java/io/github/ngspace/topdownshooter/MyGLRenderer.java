@@ -44,21 +44,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     List<Shape> elements = new ArrayList<Shape>();
 
-    private float mAngle;
     Context context;
     public MyGLRenderer(MyGLSurfaceView myGLSurfaceView) {this.context = myGLSurfaceView.getContext();}
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLES30.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
-        elements.add(new Sprite(Textures.FUCKOPENGL     , .0f,0f,4f  ,2f));//2-.25f, 1-.25f,.5f, .5f));
-        elements.add(new Sprite(Textures.SIMLEY, 2-(1.25f/2), 2-1.25f, 1.25f, 1.25f));
-        elements.add(new Sprite(Textures.FEDORA, 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
-        elements.add(new Sprite(Textures.STARSET, 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
-//        elements.add(new Sprite(Textures.SIMLEY, 1, 0, 2, 2f));
-//        elements.add(new Sprite(Textures.SIMLEY, 1, 0, 2, 2f));
-//        elements.add(new Sprite(Textures.FEDORA, 1.0f, -1f, 2, 2f));
-//        elements.add(new Sprite(Textures.SIMLEY, 0.5f, -0.0f, 2, 2f));
+        elements.add(new Sprite(Textures.STARSET, 0f, 0f, 4f, 2f));//2-.25f, 1-.25f,.5f, .5f));
+//        elements.add(new Sprite(Textures.SIMLEY    , 2-(1.25f/2)    , 2-1.25f, 1.25f, 1.25f));
+//        elements.add(new Sprite(Textures.STARSET c  , 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
+//        elements.add(new Sprite(Textures.STARSET   , 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
     }
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
@@ -77,7 +72,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0, 0, 0f, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
-        Matrix.translateM(mViewMatrix, 0, -.0f, 0, 0);
+//        Matrix.translateM(mViewMatrix, 0, -.0f, 0, 0);
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
@@ -97,7 +92,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // such as screen rotation
         GLES30.glViewport(0, 0, OpenGLActivity.realWidth, OpenGLActivity.realHeight);
 
-        float ratio = (float) OpenGLActivity.realWidth / OpenGLActivity.realHeight;
+        float ratio = 2340f/1080f;//(float) OpenGLActivity.realWidth / OpenGLActivity.realHeight;
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
@@ -146,22 +141,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             Log.e(TAG, glOperation + ": glError " + error);
             throw new RuntimeException(glOperation + ": glError " + error);
         }
-    }
-
-    /**
-     * Returns the rotation angle of the triangle shape (mTriangle).
-     *
-     * @return - A float representing the rotation angle.
-     */
-    public float getAngle() {
-        return mAngle;
-    }
-
-    /**
-     * Sets the rotation angle of the triangle shape (mTriangle).
-     */
-    public void setAngle(float angle) {
-        mAngle = angle;
     }
 
 }
