@@ -13,30 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter;
+package io.github.ngspace.topdownshooter.opengl;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLES30;
-import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.ngspace.topdownshooter.opengl.elements.Shape;
+import io.github.ngspace.topdownshooter.opengl.elements.Sprite;
+import io.github.ngspace.topdownshooter.opengl.elements.Square;
+
 /**
  * Provides drawing instructions for a GLSurfaceView object. This class
  * must override the OpenGL ES drawing lifecycle methods:
  * <ul>
- *   <li>{@link GLSurfaceView.Renderer#onSurfaceCreated}</li>
- *   <li>{@link GLSurfaceView.Renderer#onDrawFrame}</li>
- *   <li>{@link GLSurfaceView.Renderer#onSurfaceChanged}</li>
+ *   <li>{@link android.opengl.GLSurfaceView.Renderer#onSurfaceCreated}</li>
+ *   <li>{@link android.opengl.GLSurfaceView.Renderer#onDrawFrame}</li>
+ *   <li>{@link android.opengl.GLSurfaceView.Renderer#onSurfaceChanged}</li>
  * </ul>
  */
-public class MyGLRenderer implements GLSurfaceView.Renderer {
+public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 
     private static final String TAG = "MyGLRenderer";
 //    public Sprite smiley;
@@ -44,16 +47,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     List<Shape> elements = new ArrayList<Shape>();
 
-    Context context;
-    public MyGLRenderer(MyGLSurfaceView myGLSurfaceView) {this.context = myGLSurfaceView.getContext();}
+    GLSurfaceView context;
+    public GLRenderer(GLSurfaceView GLSurfaceView) {
+        this.context = GLSurfaceView;
+    }
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLES30.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
-        elements.add(new Sprite(Textures.STARSET, 0f, 0f, 4f, 2f));//2-.25f, 1-.25f,.5f, .5f));
-//        elements.add(new Sprite(Textures.SIMLEY    , 2-(1.25f/2)    , 2-1.25f, 1.25f, 1.25f));
-//        elements.add(new Sprite(Textures.STARSET c  , 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
-//        elements.add(new Sprite(Textures.STARSET   , 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
+        //elements.add(new Square(context.getContext()));
+        elements.add(new Sprite(Textures.FUCKOPENGL, 0f, 0f, 4f, 2f));//2-.25f, 1-.25f,.5f, .5f));
+        elements.add(new Sprite(Textures.SIMLEY    , 2-(1.25f/2)    , 2-1.25f, 1.25f, 1.25f));
+        elements.add(new Sprite(Textures.FEDORA   , 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
+        elements.add(new Sprite(Textures.STARSET   , 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
     }
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
@@ -71,8 +77,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA);
 
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0f, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
-//        Matrix.translateM(mViewMatrix, 0, -.0f, 0, 0);
+        Matrix.setLookAtM(mViewMatrix, 0, -0, 0f, -3f, .0f, 0.0f, 0f, .0f, 1.0f, 0.0f);
+        //Matrix.translateM(mViewMatrix, 0, -0.0f, 0, 0);
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
@@ -90,9 +96,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         // Adjust the viewport based on geometry changes,
         // such as screen rotation
+        Log.i("NGSPACEly", ""+context.getWidth());
+        OpenGLActivity.realWidth = context.getWidth();
+        OpenGLActivity.realHeight = context.getHeight();
         GLES30.glViewport(0, 0, OpenGLActivity.realWidth, OpenGLActivity.realHeight);
 
-        float ratio = 2340f/1080f;//(float) OpenGLActivity.realWidth / OpenGLActivity.realHeight;
+        float ratio = OpenGLActivity.realHeight/(OpenGLActivity.realHeight/2);//(float) OpenGLActivity.realWidth / OpenGLActivity.realHeight;
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method

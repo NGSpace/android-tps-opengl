@@ -17,9 +17,8 @@
         android:theme="@style/Theme.TopDownShooter"
         tools:targetApi="31">
         <activity
-            android:name=".OpenGLActivity"
-            android:theme="@style/customTheme"
-            android:screenOrientation="landscape"
+            android:name=".opengl.OpenGLActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter;
+package io.github.ngspace.topdownshooter.opengl.elements;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -23,8 +23,12 @@ import java.nio.ShortBuffer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.RectF;
 import android.opengl.GLES30;
 import android.opengl.GLUtils;
+
+import io.github.ngspace.topdownshooter.opengl.GLRenderer;
+import io.github.ngspace.topdownshooter.R;
 
 /**
  * A two-dimensional square for use as a drawn object in OpenGL ES 3.0.
@@ -61,10 +65,10 @@ void main()
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
     static float squareCoords[] = {
-            -0.5f,  0.5f, 0.0f,   // top left
-            -0.5f, -0.5f, 0.0f,   // bottom left
-             0.5f, -0.5f, 0.0f,   // bottom right
-             0.5f,  0.5f, 0.0f }; // top right
+            -1.0f,  1.0f, 0.0f,   // top left
+            -1.0f, -1.0f, 0.0f,   // bottom left
+             1.0f, -1.0f, 0.0f,   // bottom right
+             1.0f,  1.0f, 0.0f }; // top right
 
     private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
 
@@ -101,10 +105,10 @@ void main()
         drawListBuffer.position(0);
 
         // prepare shaders and OpenGL program
-        int vertexShader = MyGLRenderer.loadShader(
+        int vertexShader = GLRenderer.loadShader(
                 GLES30.GL_VERTEX_SHADER,
                 vertexShaderCode);
-        int fragmentShader = MyGLRenderer.loadShader(
+        int fragmentShader = GLRenderer.loadShader(
                 GLES30.GL_FRAGMENT_SHADER,
                 fragmentShaderCode);
 
@@ -114,7 +118,6 @@ void main()
         GLES30.glLinkProgram(mProgram);                  // create OpenGL program executables
 
         mActivityContext = activityContext;
-        mTextureDataHandle = loadTexture(mActivityContext, R.drawable.simley);
     }
 
     /**
@@ -147,11 +150,11 @@ void main()
 
         // get handle to shape's transformation matrix
         mMVPMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMVPMatrix");
-        MyGLRenderer.checkGlError("glGetUniformLocation");
+        GLRenderer.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
         GLES30.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
-        MyGLRenderer.checkGlError("glUniformMatrix4fv");
+        GLRenderer.checkGlError("glUniformMatrix4fv");
 
         // Draw the square
         GLES30.glDrawElements(
@@ -160,6 +163,11 @@ void main()
 
         // Disable vertex array
         GLES30.glDisableVertexAttribArray(mPositionHandle);
+    }
+
+    @Override
+    public RectF getBounds() {
+        return new RectF(0,0,0,0);
     }
 
     @Override
@@ -175,41 +183,5 @@ void main()
     @Override
     public void touchUp(float x, float y) {
 
-    }
-
-    public static int loadTexture(Context context, final int resourceId)
-    {
-        final int[] textureHandle = new int[1];
-
-        GLES30.glGenTextures(1, textureHandle, 0);
-
-        if (textureHandle[0] != 0)
-        {
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = false;   // No pre-scaling
-
-            // Read in the resource
-            final Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
-
-            // Bind to the texture in OpenGL
-            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle[0]);
-
-            // Set filtering
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
-
-            // Load the bitmap into the bound texture.
-            GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0);
-
-            // Recycle the bitmap, since its data has been loaded into OpenGL.
-            bitmap.recycle();
-        }
-
-        if (textureHandle[0] == 0)
-        {
-            throw new RuntimeException("Error loading texture.");
-        }
-
-        return textureHandle[0];
     }
 }

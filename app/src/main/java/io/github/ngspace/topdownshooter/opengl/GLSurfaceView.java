@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter;
+package io.github.ngspace.topdownshooter.opengl;
 
 import android.content.Context;
-import android.opengl.GLSurfaceView;
-import android.util.Log;
 import android.view.MotionEvent;
 
 /**
@@ -25,23 +23,22 @@ import android.view.MotionEvent;
  * This view can also be used to capture touch events, such as a user
  * interacting with drawn objects.
  */
-public class MyGLSurfaceView extends GLSurfaceView {
+public class GLSurfaceView extends android.opengl.GLSurfaceView {
 
-    private final MyGLRenderer mRenderer;
+    private final GLRenderer mRenderer;
 
-    public MyGLSurfaceView(Context context) {
+    public GLSurfaceView(Context context) {
         super(context);
-
         // Create an OpenGL ES 3.0 context.
         setEGLContextClientVersion(3);
         //fix for error No Config chosen, but I don't know what this does.
         super.setEGLConfigChooser(8 , 8, 8, 8, 16, 0);
         // Set the Renderer for drawing on the GLSurfaceView
-        mRenderer = new MyGLRenderer(this);
+        mRenderer = new GLRenderer(this);
         setRenderer(mRenderer);
 
         // Render the view only when there is a change in the drawing data
-        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        setRenderMode(android.opengl.GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
     private final float TOUCH_SCALE_FACTOR = 180.0f / 320;

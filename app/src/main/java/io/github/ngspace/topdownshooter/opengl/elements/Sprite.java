@@ -1,17 +1,18 @@
-package io.github.ngspace.topdownshooter;
+package io.github.ngspace.topdownshooter.opengl.elements;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
+import android.graphics.RectF;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+
+import io.github.ngspace.topdownshooter.opengl.GLRenderer;
+import io.github.ngspace.topdownshooter.opengl.OpenGLActivity;
+import io.github.ngspace.topdownshooter.opengl.TextureInfo;
 
 public class Sprite implements Shape {
 
@@ -99,8 +100,8 @@ void main() {
         drawListBuffer.put(drawOrder);
         drawListBuffer.position(0);
 
-        int vertexShader = MyGLRenderer.loadShader(GLES30.GL_VERTEX_SHADER, vertexShaderCode);
-        int fragmentShader = MyGLRenderer.loadShader(GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode);
+        int vertexShader = GLRenderer.loadShader(GLES30.GL_VERTEX_SHADER, vertexShaderCode);
+        int fragmentShader = GLRenderer.loadShader(GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
         shaderProgram = GLES30.glCreateProgram();
         GLES30.glAttachShader(shaderProgram, vertexShader);
@@ -192,6 +193,11 @@ void main() {
         GLES30.glDisableVertexAttribArray(mPositionHandle);
     }
 
+    @Override
+    public RectF getBounds() {
+        return new RectF(x,y,x+width,y+height);
+    }
+
     float clamp(float value, float min, float max) {
         return Math.max(min, Math.min(max, value));
     }
@@ -205,7 +211,7 @@ void main() {
     @Override
     public void touchDown(float x, float y) {
         ispressed = true;
-        clickx = (x/OpenGLActivity.realWidth*4+0.125f)-1f;
+        clickx = (x/ OpenGLActivity.realWidth*4+0.125f)-1f;
         clicky = (y/OpenGLActivity.realHeight*2);
 
         velx += clamp(clickx/20, -5, 5);

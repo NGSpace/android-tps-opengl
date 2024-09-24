@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter;
+package io.github.ngspace.topdownshooter.opengl.elements;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import android.content.res.Resources;
-import android.graphics.Point;
+import android.graphics.RectF;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
-import android.util.DisplayMetrics;
 import android.util.Log;
+
+import io.github.ngspace.topdownshooter.opengl.GLRenderer;
 
 /**
  * A two-dimensional triangle for use as a drawn object in OpenGL ES 3.1
@@ -95,9 +96,9 @@ public class Triangle implements Shape {
         vertexBuffer.position(0);
 
         // prepare shaders and OpenGL program
-        int vertexShader = MyGLRenderer.loadShader(
+        int vertexShader = GLRenderer.loadShader(
             GLES30.GL_VERTEX_SHADER, vertexShaderCode);
-        int fragmentShader = MyGLRenderer.loadShader(
+        int fragmentShader = GLRenderer.loadShader(
             GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
         mProgram = GLES30.glCreateProgram();             // create empty OpenGL Program
@@ -146,17 +147,22 @@ public class Triangle implements Shape {
 
         // get handle to shape's transformation matrix
         mMVPMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMVPMatrix");
-        MyGLRenderer.checkGlError("glGetUniformLocation");
+        GLRenderer.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
         GLES30.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, scratch, 0);
-        MyGLRenderer.checkGlError("glUniformMatrix4fv");
+        GLRenderer.checkGlError("glUniformMatrix4fv");
 
         // Draw the triangle
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, vertexCount);
 
         // Disable vertex array
         GLES30.glDisableVertexAttribArray(mPositionHandle);
+    }
+
+    @Override
+    public RectF getBounds() {
+        return new RectF(0,0,0,0);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter;
+package io.github.ngspace.topdownshooter.opengl;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,6 +8,9 @@ import android.opengl.GLUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import io.github.ngspace.topdownshooter.MainActivity;
+import io.github.ngspace.topdownshooter.R;
 
 public class Textures {
     public static float totalWidth = 800;
