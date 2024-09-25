@@ -13,11 +13,6 @@ import io.github.ngspace.topdownshooter.MainActivity;
 import io.github.ngspace.topdownshooter.R;
 
 public class Textures {
-    public static float totalWidth = 800;
-    public static float width = 800;
-    public static float height = 600;
-
-    public static int textureDataHandle;
 
     public static int length = 4;
 
@@ -47,16 +42,7 @@ public class Textures {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inScaled = false;   // No pre-scaling
 
-//            Bitmap bmp = Bitmap.createBitmap((int) width, (int) height, conf); // this creates a MUTABLE bitmap
-//            Canvas canvas = new Canvas(bmp);
-//            for (int i = 0;i<drawables.length;i++) {
-//                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), GetImage(context,drawables[i]), options);
-//                canvas.drawBitmap(bitmap, null, new Rect(800*i,0, (int)800*i+800, (int) height), null);
-//                bitmap.recycle();
-//            }
             Bitmap bmp = BitmapFactory.decodeResource(MainActivity.globalContext.getResources(), resourceId, options);
-//            canvas.drawBitmap(bitmap, null, new Rect(0,0, (int)800, (int) height), null);
-//            bitmap.recycle();
 
             // Bind to the texture in OpenGL
             GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle[textureIndex]);
