@@ -242,7 +242,7 @@ void main() {
         this.y = y;
         this.width = width;
         this.height = height;
-        float realx = 2f - x;
+        float realx = 1f - x;
         float realy = 1f - y;
         spriteCoords = new float[] {realx, realy-height,   // top left
                 realx-width, realy-height,   // bottom left

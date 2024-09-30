@@ -3,15 +3,28 @@
   <component name="deploymentTargetSelector">
     <selectionStates>
       <SelectionState runConfigName="app">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-18T20:31:33.894817217Z">
+        <option name="selectionMode" value="DIALOG" />
+        <DropdownSelection timestamp="2024-09-30T18:17:50.346045439Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/computer/.var/app/com.google.AndroidStudio/config/.android/avd/Pixel_Fold_API_35.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/home/computer/.var/app/com.google.AndroidStudio/config/.android/avd/Pixel_2_XL_API_30.avd" />
             </handle>
           </Target>
         </DropdownSelection>
-        <DialogSelection />
+        <DialogSelection>
+          <targets>
+            <Target type="DEFAULT_BOOT">
+              <handle>
+                <DeviceId pluginId="Default" identifier="serial=&lt;unknown&gt;;connection=1dc0eb68" />
+              </handle>
+            </Target>
+            <Target type="DEFAULT_BOOT">
+              <handle>
+                <DeviceId pluginId="LocalEmulator" identifier="path=/home/computer/.var/app/com.google.AndroidStudio/config/.android/avd/Pixel_2_XL_API_30.avd" />
+              </handle>
+            </Target>
+          </targets>
+        </DialogSelection>
       </SelectionState>
     </selectionStates>
   </component>

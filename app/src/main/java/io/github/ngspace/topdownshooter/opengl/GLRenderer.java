@@ -56,10 +56,10 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLES30.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
         //elements.add(new Square(context.getContext()));
-        elements.add(new Sprite(Textures.FUCKOPENGL, 0f, 0f, 4f, 2f));//2-.25f, 1-.25f,.5f, .5f));
-        elements.add(new Sprite(Textures.SIMLEY    , 2-(1.25f/2)    , 2-1.25f, 1.25f, 1.25f));
-        elements.add(new Sprite(Textures.FEDORA   , 1-(0.95f/2)-.1f, 2-0.95f, 0.95f, 0.95f));
-        elements.add(new Sprite(Textures.STARSET   , 3-(0.95f/2)+.1f, 2-0.95f, 0.95f, 0.95f));
+        elements.add(new Sprite(Textures.STARSET, 0f, 0f, 2f, 2f));//2-.25f, 1-.25f,.5f, .5f));
+        elements.add(new Sprite(Textures.SIMLEY    , 1-(.75f/2)    , 2-1.25f, .75f, 1.25f));
+        elements.add(new Sprite(Textures.FEDORA   , (0.45f/2)-.1f, 2-0.95f, 0.45f, 0.95f));
+        elements.add(new Sprite(Textures.FUCKOPENGL   , 2-.55f, 2-0.95f, 0.45f, 0.95f));
     }
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
@@ -99,14 +99,21 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         Log.i("NGSPACEly", ""+context.getWidth());
         OpenGLActivity.realWidth = context.getWidth();
         OpenGLActivity.realHeight = context.getHeight();
-        GLES30.glViewport(0, 0, OpenGLActivity.realWidth, OpenGLActivity.realHeight);
+        //GLES30.glViewport(0, 0, (int) OpenGLActivity.realWidth, (int) OpenGLActivity.realHeight);
 
-        float ratio = OpenGLActivity.realHeight/(OpenGLActivity.realHeight/2);//(float) OpenGLActivity.realWidth / OpenGLActivity.realHeight;
+        float ratio = OpenGLActivity.realHeight/OpenGLActivity.realWidth;
+
+        float aspectRatio = 1080f/1920f;
+
+        float horratio = (1440f)/OpenGLActivity.realWidth;
+        horratio = OpenGLActivity.realHeight-1440f;
+        horratio = horratio/1440f;
+        float res = ((horratio%1)/2);
+        Log.i("NGSPACEly", ""+res);
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
-
+        Matrix.frustumM(mProjectionMatrix, 0, -res, res, -1f, 1f, 3f, 7);
     }
 
     /**

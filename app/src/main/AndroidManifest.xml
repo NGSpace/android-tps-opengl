@@ -19,7 +19,9 @@
         <activity
             android:name=".opengl.OpenGLActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
