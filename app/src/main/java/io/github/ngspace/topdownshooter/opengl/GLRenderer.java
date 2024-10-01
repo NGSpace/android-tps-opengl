@@ -99,8 +99,9 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         Log.i("NGSPACEly", ""+context.getWidth());
         OpenGLActivity.realWidth = context.getWidth();
         OpenGLActivity.realHeight = context.getHeight();
-        //GLES30.glViewport(0, 0, (int) OpenGLActivity.realWidth, (int) OpenGLActivity.realHeight);
 
+        //GLES30.glViewport(0, 0, (int) OpenGLActivity.realWidth, (int) OpenGLActivity.realHeight);
+        GLES30.glViewport(0,0,1920,1080);
         float ratio = OpenGLActivity.realHeight/OpenGLActivity.realWidth;
 
         float aspectRatio = 1080f/1920f;
@@ -113,7 +114,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -res, res, -1f, 1f, 3f, 7);
+        Matrix.frustumM(mProjectionMatrix, 0, -1, 1, -1f, 1f, 3f, 7);
     }
 
     /**
