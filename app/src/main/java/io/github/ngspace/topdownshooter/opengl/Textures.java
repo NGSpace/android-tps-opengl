@@ -14,17 +14,19 @@ import io.github.ngspace.topdownshooter.R;
 
 public class Textures {
 
-    public static int length = 4;
+    public static int length = 10;
 
     public static final TextureInfo SIMLEY = loadTexture(R.drawable.simley);
     public static final TextureInfo FEDORA = loadTexture(R.drawable.fedora);
     public static final TextureInfo STARSET = loadTexture(R.drawable.starset);
     public static final TextureInfo FUCKOPENGL = loadTexture(R.drawable.fuckopengl);
+    public static final TextureInfo ANCHOR = loadTexture(R.drawable.anchor);
+
 
     public static int GetImage(@NonNull Context c, String ImageName) {
         return c.getResources().getIdentifier(ImageName, "drawable", c.getPackageName());
     }
-    static int[] textureHandle = new int[2];
+    static int[] textureHandle = null;
 
     static int textureIndex = 0;
 
@@ -37,7 +39,6 @@ public class Textures {
 
         if (textureHandle[textureIndex] != 0)
         {
-//            width = 800 * length;
             Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inScaled = false;   // No pre-scaling
@@ -65,7 +66,6 @@ public class Textures {
         }
 
         var info = new TextureInfo(textureHandle[textureIndex]);
-        Log.i("NGSPACEly",textureHandle[textureIndex] + "  "+textureIndex);
         textureIndex++;
         return info;
     }

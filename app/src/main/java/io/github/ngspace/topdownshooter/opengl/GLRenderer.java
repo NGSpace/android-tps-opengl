@@ -18,12 +18,14 @@ package io.github.ngspace.topdownshooter.opengl;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
+import android.graphics.PointF;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.github.ngspace.topdownshooter.opengl.elements.Shape;
@@ -47,25 +49,37 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 
     List<Shape> elements = new ArrayList<Shape>();
 
-    GLSurfaceView context;
-    public GLRenderer(GLSurfaceView GLSurfaceView) {
-        this.context = GLSurfaceView;
+    OpenGLSurfaceView context;
+    public Camera camera = new Camera();
+    public Shape background;
+
+    public GLRenderer(OpenGLSurfaceView OpenGLSurfaceView) {
+        this.context = OpenGLSurfaceView;
     }
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-        GLES30.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
+        GLES30.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+        background = new Square();
+
         //elements.add(new Square(context.getContext()));
-        elements.add(new Sprite(Textures.STARSET, 0f, 0f, 2f, 2f));//2-.25f, 1-.25f,.5f, .5f));
-        elements.add(new Sprite(Textures.SIMLEY    , 1-(.75f/2)    , 2-1.25f, .75f, 1.25f));
-        elements.add(new Sprite(Textures.FEDORA   , (0.45f/2)-.1f, 2-0.95f, 0.45f, 0.95f));
-        elements.add(new Sprite(Textures.FUCKOPENGL   , 2-.55f, 2-0.95f, 0.45f, 0.95f));
+        elements.add(new Sprite(Textures.STARSET, 0f, 0f, 2f, 2f, this) {
+            @Override public void touchDrag(MotionEvent e, float x, float y) {}
+            @Override public void touchDown(MotionEvent e, float x, float y) {}
+            @Override public void touchUp(MotionEvent e, float x, float y) {}
+        });
+        elements.add(new Sprite(Textures.ANCHOR, 0f, 0f, 2f, 2f, this));//2-.25f, 1-.25f,.5f, .5f));
+//        elements.add(new Sprite(Textures.SIMLEY, 1-(.75f/2), 2-1.25f, .75f, 1.25f));
+//        elements.add(new Sprite(Textures.FEDORA, (0.45f/2)-.1f, 2-0.95f, 0.45f, 0.95f));
+        elements.add(new Sprite(Textures.FUCKOPENGL, 2-.55f, 2-0.95f, 0.45f, 0.95f, this));
+//        ((Sprite) elements.get(0)).bounds(1,1,1,1);
     }
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
-    private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
+    private final float[] backgroundMatrix = {-3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.5f, 1.0f, 0.0f, 0.0f, -3.0f, 3.0f};
 
     @Override
     public void onDrawFrame(GL10 unused) {
@@ -78,33 +92,33 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 
         // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0, -0, 0f, -3f, .0f, 0.0f, 0f, .0f, 1.0f, 0.0f);
-        //Matrix.translateM(mViewMatrix, 0, -0.0f, 0, 0);
+        var v = new float[16];
 
         // Calculate the projection and view transformation
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
-        // Draw
+        Matrix.multiplyMM(mMVPMatrix, 0, camera.getProjectionMatrix(), 0, mViewMatrix, 0);
 
-        for (Shape shape : elements) {
-            shape.draw(mMVPMatrix);
-        }
-
-//        smiley.draw(mMVPMatrix);
-//        background.draw(mMVPMatrix);
+        // Draw background
+        background.draw(backgroundMatrix);
+        // Draw elements
+        for (Shape shape : elements) shape.draw(mMVPMatrix);
     }
+
+    int viewportBuffer;
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         // Adjust the viewport based on geometry changes,
         // such as screen rotation
-        Log.i("NGSPACEly", ""+context.getWidth());
-        OpenGLActivity.realWidth = context.getWidth();
         float height1 = context.getHeight();
         float relation = height1/1080;
-        GLES30.glViewport(0,0, (int) (1920*relation), (int) (1080*relation));
+        viewportBuffer = (int) (context.getWidth() - (1920*relation));
+        GLES30.glViewport(viewportBuffer/2,0, (int) (1920*relation), (int) (1080*relation));
 
-        // this projection matrix is applied to object coordinates
-        // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -1, 1, -1f, 1f, 3f, 7);
+        camera.updateProjection();
+    }
+
+    public PointF toViewport(float x, float y) {
+        return new PointF(((x-viewportBuffer/2f)/(OpenGLActivity.realWidth-viewportBuffer))*2, (y/OpenGLActivity.realHeight)*2);
     }
 
     /**

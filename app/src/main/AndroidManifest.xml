@@ -24,6 +24,8 @@
             tools:ignore="DiscouragedApi" />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="landscape"
+            tools:ignore="DiscouragedApi"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

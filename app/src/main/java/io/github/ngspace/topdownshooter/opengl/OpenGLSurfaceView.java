@@ -16,49 +16,52 @@
 package io.github.ngspace.topdownshooter.opengl;
 
 import android.content.Context;
+import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.MotionEvent;
+
+import io.github.ngspace.topdownshooter.opengl.elements.Shape;
 
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.
  * This view can also be used to capture touch events, such as a user
  * interacting with drawn objects.
  */
-public class GLSurfaceView extends android.opengl.GLSurfaceView {
+public class OpenGLSurfaceView extends GLSurfaceView {
 
     private final GLRenderer mRenderer;
 
-    public GLSurfaceView(Context context) {
+    public OpenGLSurfaceView(Context context) {
         super(context);
         // Create an OpenGL ES 3.0 context.
         setEGLContextClientVersion(3);
-        //fix for error No Config chosen, but I don't know what this does.
-        super.setEGLConfigChooser(8 , 8, 8, 8, 16, 0);
+
         // Set the Renderer for drawing on the GLSurfaceView
-        mRenderer = new GLRenderer(this);
-        setRenderer(mRenderer);
+        setRenderer((mRenderer = new GLRenderer(this)));
 
         // Render the view only when there is a change in the drawing data
-        setRenderMode(android.opengl.GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
-    private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
-    private float mPreviousX;
-    private float mPreviousY;
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
+    @Override public boolean onTouchEvent(MotionEvent e) {
         float x = e.getX();
         float y = e.getY();
+        var viewport = mRenderer.toViewport(x,y);
+        x = viewport.x;
+        y = viewport.y;
         if (e.getAction()==MotionEvent.ACTION_UP) {
-            mRenderer.elements.get(0).touchUp(x, y);
+            for (Shape s : mRenderer.elements) if (s.intersects(x,y)) s.touchUp(e, x, y);
             return true;
         }
         if (e.getAction()==MotionEvent.ACTION_MOVE) {
-            mRenderer.elements.get(0).touchDrag(x, y);
+            for (Shape s : mRenderer.elements) {
+                Log.i("NGSPACEly",x + "  " + y);
+                if (s.intersects(x,y)) s.touchDrag(e, x, y);
+            }
             return true;
         }
         if (e.getAction()==MotionEvent.ACTION_DOWN) {
-            mRenderer.elements.get(0).touchDown(x, y);
+            for (Shape s : mRenderer.elements) if (s.intersects(x,y)) s.touchDown(e, x, y);
             return true;
         }
         return false;

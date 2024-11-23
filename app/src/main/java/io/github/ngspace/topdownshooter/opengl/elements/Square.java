@@ -21,28 +21,25 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.opengl.GLES30;
-import android.opengl.GLUtils;
+import android.view.MotionEvent;
 
 import io.github.ngspace.topdownshooter.opengl.GLRenderer;
-import io.github.ngspace.topdownshooter.R;
 
 /**
  * A two-dimensional square for use as a drawn object in OpenGL ES 3.0.
  */
 public class Square implements Shape {
 
-    private final String vertexShaderCode =
-        "#version 300 es 			  \n"
-            + "uniform mat4 uMVPMatrix;     \n"
-            + "in vec4 vPosition;           \n"
-            + "void main()                  \n"
-            + "{                            \n"
-            + "   gl_Position = uMVPMatrix * vPosition;  \n"
-            + "}                            \n";
+    private final String vertexShaderCode = """
+#version 300 es
+uniform mat4 uMVPMatrix;
+in vec4 vPosition;
+void main() {
+   gl_Position = uMVPMatrix * vPosition;
+}
+""";
 
     private final String fragmentShaderCode = """
 #version 300 es
@@ -64,28 +61,20 @@ void main()
 
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
-    static float squareCoords[] = {
+    static float[] squareCoords = {
             -1.0f,  1.0f, 0.0f,   // top left
             -1.0f, -1.0f, 0.0f,   // bottom left
              1.0f, -1.0f, 0.0f,   // bottom right
              1.0f,  1.0f, 0.0f }; // top right
 
-    private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
+    private final short[] drawOrder = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
 
-    private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
-
-    float color[] = { 0.2f, 0.709803922f, 0.898039216f, 1.0f };
-
-    //Reference to Activity Context
-    private final Context mActivityContext;
-
-    //Added for Textures
-    private int mTextureDataHandle;
+    float[] color = { 0.2f, 0.709803922f, 0.898039216f, 1.0f };
 
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
      */
-    public Square(Context activityContext) {
+    public Square() {
         // initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(
         // (# of coordinate values * 4 bytes per float)
@@ -96,28 +85,21 @@ void main()
         vertexBuffer.position(0);
 
         // initialize byte buffer for the draw list
-        ByteBuffer dlb = ByteBuffer.allocateDirect(
-                // (# of coordinate values * 2 bytes per short)
-                drawOrder.length * 2);
+        ByteBuffer dlb = ByteBuffer.allocateDirect(/* (# of coordinate values * 2 bytes per short) */drawOrder.length * 2);
+
         dlb.order(ByteOrder.nativeOrder());
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(drawOrder);
         drawListBuffer.position(0);
 
         // prepare shaders and OpenGL program
-        int vertexShader = GLRenderer.loadShader(
-                GLES30.GL_VERTEX_SHADER,
-                vertexShaderCode);
-        int fragmentShader = GLRenderer.loadShader(
-                GLES30.GL_FRAGMENT_SHADER,
-                fragmentShaderCode);
+        int vertexShader = GLRenderer.loadShader(GLES30.GL_VERTEX_SHADER, vertexShaderCode);
+        int fragmentShader = GLRenderer.loadShader(GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
         mProgram = GLES30.glCreateProgram();             // create empty OpenGL Program
         GLES30.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
         GLES30.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
         GLES30.glLinkProgram(mProgram);                  // create OpenGL program executables
-
-        mActivityContext = activityContext;
     }
 
     /**
@@ -140,7 +122,7 @@ void main()
         GLES30.glVertexAttribPointer(
                 mPositionHandle, COORDS_PER_VERTEX,
                 GLES30.GL_FLOAT, false,
-                vertexStride, vertexBuffer);
+                COORDS_PER_VERTEX * 4, vertexBuffer);
 
         // get handle to fragment shader's vColor member
         mColorHandle = GLES30.glGetUniformLocation(mProgram, "vColor");
@@ -165,23 +147,11 @@ void main()
         GLES30.glDisableVertexAttribArray(mPositionHandle);
     }
 
-    @Override
-    public RectF getBounds() {
+    @Override public RectF getBounds() {
         return new RectF(0,0,0,0);
     }
 
-    @Override
-    public void touchDown(float x, float y) {
-
-    }
-
-    @Override
-    public void touchDrag(float x, float y) {
-
-    }
-
-    @Override
-    public void touchUp(float x, float y) {
-
-    }
+    @Override public void touchDown(MotionEvent e, float x, float y) {}
+    @Override public void touchDrag(MotionEvent e, float x, float y) {}
+    @Override public void touchUp(MotionEvent e, float x, float y) {}
 }

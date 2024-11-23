@@ -4,6 +4,7 @@ import android.graphics.RectF;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,6 +18,7 @@ import io.github.ngspace.topdownshooter.opengl.TextureInfo;
 public class Sprite implements Shape {
 
     private final TextureInfo texture;
+    private final GLRenderer renderer;
     public float angle = 0;
 
     //Added for Textures
@@ -90,7 +92,8 @@ void main() {
     private short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; //Order to draw vertices
     private final int vertexStride = COORDS_PER_VERTEX * 4; //Bytes per vertex
 
-    public Sprite(TextureInfo texture, float x, float y, float width, float height) {
+    public Sprite(TextureInfo texture, float x, float y, float width, float height, GLRenderer renderer) {
+        this.renderer = renderer;
         bounds(x,y,width,height);
 
         //Initialize byte buffer for the draw list
@@ -123,19 +126,16 @@ void main() {
 
     public void draw(float[] mvpMatrix) {
         if (ispressed) {
-            velx += clamp(clickx/20, -5, 5);
-            Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
+            //velx += clamp(clickx/20, -5, 5);
         }
         this.x = this.x + velx;
         if (velx>0) {
-            velx-=.1;
+            velx-=.1f;
             if (velx<0) velx = 0;
         } else {
-            velx+=.1;
+            velx+=.1f;
             if (velx>0) velx = 0;
         }
-
-//        bounds(this.x, this.y, width, height);
 
         final float[] mRotationMatrix = new float[16];
         float[] scratch = new float[16];
@@ -194,47 +194,31 @@ void main() {
     }
 
     @Override
-    public RectF getBounds() {
-        return new RectF(x,y,x+width,y+height);
-    }
+    public RectF getBounds() {return new RectF(x, y, x+width, y+height);}
 
-    float clamp(float value, float min, float max) {
-        return Math.max(min, Math.min(max, value));
-    }
+    float clamp(float value, float min, float max) {return Math.max(min, Math.min(max, value));}
     float clickx, clicky; boolean ispressed = false;
 
     @Override
-    public void touchUp(float x, float y) {
+    public void touchUp(MotionEvent e, float x, float y) {
         ispressed = false;
     }
 
     @Override
-    public void touchDown(float x, float y) {
+    public void touchDown(MotionEvent e, float x, float y) {
         ispressed = true;
         clickx = (x/ OpenGLActivity.realWidth*4+0.125f)-1f;
         clicky = (y/OpenGLActivity.realHeight*2);
 
         velx += clamp(clickx/20, -5, 5);
-        Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
     }
-    @Override public void touchDrag(float x, float y) {
+    @Override public void touchDrag(MotionEvent e, float x, float y) {
         clickx = (x/OpenGLActivity.realWidth*4+0.125f)-1f;
         clicky = (y/OpenGLActivity.realHeight*2);
 
         velx += clamp(clickx/20, -5, 5);
-        Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
-//        clickx = (x/OpenGLActivity.realWidth*4+0.125f)-1f;
-//        clicky = (y/OpenGLActivity.realHeight*2);
-//
-////        bounds(x/OpenGLActivity.realWidth*4-0.125f      ,y/OpenGLActivity.realHeight*2-.25f, .5f, .5f);
-////        float hyp = (float) Math.sqrt(Math.pow(this.x-clickx,2) + Math.pow(this.y-clicky,2));
-//
-////        angle = (float) Math.acos(hyp);
-//
-//        velx += clamp(clickx/20, -5, 5);
-//        Log.i("NGSPACEly", "   " + clickx + "   " + clicky + "   " + this.x + "   " + this.y + "   ");
-
-//        bounds(newx, this.y, width, height);
+        renderer.camera.setProjection(x,y);
+        bounds(x-.5f,y-.5f,1,1);
     }
 
     public void bounds(float x, float y, float width, float height) {
