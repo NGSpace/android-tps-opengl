@@ -1,13 +1,10 @@
-package io.github.ngspace.topdownshooter.opengl;
+package io.github.ngspace.topdownshooter.engine.opengl;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLES30;
+import android.opengl.GLES32;
 import android.opengl.GLUtils;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import io.github.ngspace.topdownshooter.MainActivity;
 import io.github.ngspace.topdownshooter.R;
@@ -22,10 +19,6 @@ public class Textures {
     public static final TextureInfo FUCKOPENGL = loadTexture(R.drawable.fuckopengl);
     public static final TextureInfo ANCHOR = loadTexture(R.drawable.anchor);
 
-
-    public static int GetImage(@NonNull Context c, String ImageName) {
-        return c.getResources().getIdentifier(ImageName, "drawable", c.getPackageName());
-    }
     static int[] textureHandle = null;
 
     static int textureIndex = 0;
@@ -33,9 +26,9 @@ public class Textures {
     public static TextureInfo loadTexture(int resourceId) {
         if (textureHandle==null) {
             textureHandle = new int[length];
-            GLES30.glGenTextures(length, textureHandle, 0);
+            GLES32.glGenTextures(length, textureHandle, 0);
         }
-        Log.i("GL ERROR",""+GLES30.glGetError());
+        Log.i("GL ERROR",""+GLES32.glGetError());
 
         if (textureHandle[textureIndex] != 0)
         {
@@ -46,22 +39,23 @@ public class Textures {
             Bitmap bmp = BitmapFactory.decodeResource(MainActivity.globalContext.getResources(), resourceId, options);
 
             // Bind to the texture in OpenGL
-            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle[textureIndex]);
+            GLES32.glBindTexture(GLES32.GL_TEXTURE_2D, textureHandle[textureIndex]);
 
             // Set filtering
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
+            GLES32.glTexParameteri(GLES32.GL_TEXTURE_2D, GLES32.GL_TEXTURE_MIN_FILTER, GLES32.GL_NEAREST);
+            GLES32.glTexParameteri(GLES32.GL_TEXTURE_2D, GLES32.GL_TEXTURE_MAG_FILTER, GLES32.GL_NEAREST);
+            GLES32.glTexParameteri(GLES32.GL_TEXTURE_2D, GLES32.GL_TEXTURE_WRAP_S, GLES32.GL_CLAMP_TO_EDGE);
+            GLES32.glTexParameteri(GLES32.GL_TEXTURE_2D, GLES32.GL_TEXTURE_WRAP_T, GLES32.GL_CLAMP_TO_EDGE);
 
             // Load the bitmap into the bound texture.
-            GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bmp, 0);
+            GLUtils.texImage2D(GLES32.GL_TEXTURE_2D, 0, bmp, 0);
 
             // Recycle the bitmap, since its data has been loaded into OpenGL.
             bmp.recycle();
         }
 
         if (textureHandle[textureIndex] == 0) {
+            GLRenderer.checkGlError("LoadTexture2d");
             throw new RuntimeException("Error loading textures.");
         }
 

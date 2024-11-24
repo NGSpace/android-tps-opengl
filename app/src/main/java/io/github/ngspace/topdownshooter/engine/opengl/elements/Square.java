@@ -13,44 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter.opengl.elements;
+package io.github.ngspace.topdownshooter.engine.opengl.elements;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import android.content.Context;
 import android.graphics.RectF;
-import android.opengl.GLES30;
+import android.opengl.GLES32;
 import android.view.MotionEvent;
 
-import io.github.ngspace.topdownshooter.opengl.GLRenderer;
+import io.github.ngspace.topdownshooter.engine.opengl.GLRenderer;
+import io.github.ngspace.topdownshooter.engine.opengl.Shaders;
 
 /**
  * A two-dimensional square for use as a drawn object in OpenGL ES 3.0.
  */
-public class Square implements Shape {
-
-    private final String vertexShaderCode = """
-#version 300 es
-uniform mat4 uMVPMatrix;
-in vec4 vPosition;
-void main() {
-   gl_Position = uMVPMatrix * vPosition;
-}
-""";
-
-    private final String fragmentShaderCode = """
-#version 300 es
-precision mediump float;
-uniform vec4 vColor;
-out vec4 fragColor;
-void main()
-{
-    fragColor = vColor;
-}
-""";
+public class Square extends Shape {
 
     private final FloatBuffer vertexBuffer;
     private final ShortBuffer drawListBuffer;
@@ -60,12 +40,12 @@ void main()
     private int mMVPMatrixHandle;
 
     // number of coordinates per vertex in this array
-    static final int COORDS_PER_VERTEX = 3;
+    static final int COORDS_PER_VERTEX = 2;
     static float[] squareCoords = {
-            -1.0f,  1.0f, 0.0f,   // top left
-            -1.0f, -1.0f, 0.0f,   // bottom left
-             1.0f, -1.0f, 0.0f,   // bottom right
-             1.0f,  1.0f, 0.0f }; // top right
+            -1.0f,  1.0f,   // top left
+            -1.0f, -1.0f,   // bottom left
+             1.0f, -1.0f,   // bottom right
+             1.0f,  1.0f}; // top right
 
     private final short[] drawOrder = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
 
@@ -93,13 +73,13 @@ void main()
         drawListBuffer.position(0);
 
         // prepare shaders and OpenGL program
-        int vertexShader = GLRenderer.loadShader(GLES30.GL_VERTEX_SHADER, vertexShaderCode);
-        int fragmentShader = GLRenderer.loadShader(GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode);
+        int vertexShader = GLRenderer.loadShader(GLES32.GL_VERTEX_SHADER, Shaders.SQUARE_VERT_SHADER);
+        int fragmentShader = GLRenderer.loadShader(GLES32.GL_FRAGMENT_SHADER, Shaders.SQUARE_FRAG_SHADER);
 
-        mProgram = GLES30.glCreateProgram();             // create empty OpenGL Program
-        GLES30.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
-        GLES30.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
-        GLES30.glLinkProgram(mProgram);                  // create OpenGL program executables
+        mProgram = GLES32.glCreateProgram();             // create empty OpenGL Program
+        GLES32.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
+        GLES32.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
+        GLES32.glLinkProgram(mProgram);                  // create OpenGL program executables
     }
 
     /**
@@ -110,48 +90,52 @@ void main()
      */
     public void draw(float[] mvpMatrix) {
         // Add program to OpenGL environment
-        GLES30.glUseProgram(mProgram);
+        GLES32.glUseProgram(mProgram);
 
         // get handle to vertex shader's vPosition member
-        mPositionHandle = GLES30.glGetAttribLocation(mProgram, "vPosition");
+        mPositionHandle = GLES32.glGetAttribLocation(mProgram, "vPosition");
 
         // Enable a handle to the triangle vertices
-        GLES30.glEnableVertexAttribArray(mPositionHandle);
+        GLES32.glEnableVertexAttribArray(mPositionHandle);
 
         // Prepare the triangle coordinate data
-        GLES30.glVertexAttribPointer(
+        GLES32.glVertexAttribPointer(
                 mPositionHandle, COORDS_PER_VERTEX,
-                GLES30.GL_FLOAT, false,
+                GLES32.GL_FLOAT, false,
                 COORDS_PER_VERTEX * 4, vertexBuffer);
 
         // get handle to fragment shader's vColor member
-        mColorHandle = GLES30.glGetUniformLocation(mProgram, "vColor");
+        mColorHandle = GLES32.glGetUniformLocation(mProgram, "vColor");
 
         // Set color for drawing the triangle
-        GLES30.glUniform4fv(mColorHandle, 1, color, 0);
+        GLES32.glUniform4fv(mColorHandle, 1, color, 0);
 
         // get handle to shape's transformation matrix
-        mMVPMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMVPMatrix");
+        mMVPMatrixHandle = GLES32.glGetUniformLocation(mProgram, "uMVPMatrix");
         GLRenderer.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
-        GLES30.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+        GLES32.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
         GLRenderer.checkGlError("glUniformMatrix4fv");
 
         // Draw the square
-        GLES30.glDrawElements(
-                GLES30.GL_TRIANGLES, drawOrder.length,
-                GLES30.GL_UNSIGNED_SHORT, drawListBuffer);
+        GLES32.glDrawElements(
+                GLES32.GL_TRIANGLES, drawOrder.length,
+                GLES32.GL_UNSIGNED_SHORT, drawListBuffer);
 
         // Disable vertex array
-        GLES30.glDisableVertexAttribArray(mPositionHandle);
+        GLES32.glDisableVertexAttribArray(mPositionHandle);
     }
 
     @Override public RectF getBounds() {
-        return new RectF(0,0,0,0);
+        return new RectF(0,0,2,2);
     }
 
-    @Override public void touchDown(MotionEvent e, float x, float y) {}
-    @Override public void touchDrag(MotionEvent e, float x, float y) {}
-    @Override public void touchUp(MotionEvent e, float x, float y) {}
+    @Override public void setBounds(float x, float y, float width, float height) {
+        throw new UnsupportedOperationException("Unused method, not necessary to fill.");
+    }
+
+    @Override public boolean touchDown(MotionEvent e, float x, float y) {return false;}
+    @Override public boolean touchDrag(MotionEvent e, float x, float y) {return false;}
+    @Override public boolean touchUp  (MotionEvent e, float x, float y) {return false;}
 }

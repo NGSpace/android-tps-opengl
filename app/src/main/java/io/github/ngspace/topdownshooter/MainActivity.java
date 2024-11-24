@@ -9,12 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
-import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,9 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.util.Timer;
-
-import io.github.ngspace.topdownshooter.opengl.OpenGLActivity;
+import io.github.ngspace.topdownshooter.engine.opengl.OpenGLActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,10 +52,12 @@ public class MainActivity extends AppCompatActivity {
 
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(()-> {
-            Intent intent = new Intent(this, OpenGLActivity.class);
+            Intent intent = new Intent(this, TestGameActivity.class);
             startActivity(intent);
-        }, 3000);
+        }, 001);
 
         findViewById(R.id.rotatinglogo).animate().setInterpolator(new LinearInterpolator()).setDuration(3500).rotation(410).start();
     }
+
+    public static void log(Object o) {Log.i("NGSPACEly",String.valueOf(o));}
 }

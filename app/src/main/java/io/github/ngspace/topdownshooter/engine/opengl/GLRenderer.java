@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter.opengl;
+package io.github.ngspace.topdownshooter.engine.opengl;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.PointF;
-import android.opengl.GLES30;
+import android.opengl.GLES32;
 import android.opengl.Matrix;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
-import io.github.ngspace.topdownshooter.opengl.elements.Shape;
-import io.github.ngspace.topdownshooter.opengl.elements.Sprite;
-import io.github.ngspace.topdownshooter.opengl.elements.Square;
+import io.github.ngspace.topdownshooter.engine.opengl.elements.Shape;
+import io.github.ngspace.topdownshooter.engine.opengl.elements.Sprite;
+import io.github.ngspace.topdownshooter.engine.opengl.elements.Square;
 
 /**
  * Provides drawing instructions for a GLSurfaceView object. This class
@@ -47,11 +47,16 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 //    public Sprite smiley;
 //    public Sprite background;
 
-    List<Shape> elements = new ArrayList<Shape>();
+    public List<Shape> elements = new ArrayList<>();
+    public List<Consumer<GLRenderer>> Exec = new ArrayList<>();
+    public List<BiConsumer<GLRenderer, Float>> drawListeners = new ArrayList<>();
 
     OpenGLSurfaceView context;
     public Camera camera = new Camera();
     public Shape background;
+
+    private float lastExecMs = 0;
+    private Consumer<GLRenderer> creationListener;
 
     public GLRenderer(OpenGLSurfaceView OpenGLSurfaceView) {
         this.context = OpenGLSurfaceView;
@@ -59,21 +64,10 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-        GLES30.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
+        GLES32.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         background = new Square();
 
-        //elements.add(new Square(context.getContext()));
-        elements.add(new Sprite(Textures.STARSET, 0f, 0f, 2f, 2f, this) {
-            @Override public void touchDrag(MotionEvent e, float x, float y) {}
-            @Override public void touchDown(MotionEvent e, float x, float y) {}
-            @Override public void touchUp(MotionEvent e, float x, float y) {}
-        });
-        elements.add(new Sprite(Textures.ANCHOR, 0f, 0f, 2f, 2f, this));//2-.25f, 1-.25f,.5f, .5f));
-//        elements.add(new Sprite(Textures.SIMLEY, 1-(.75f/2), 2-1.25f, .75f, 1.25f));
-//        elements.add(new Sprite(Textures.FEDORA, (0.45f/2)-.1f, 2-0.95f, 0.45f, 0.95f));
-        elements.add(new Sprite(Textures.FUCKOPENGL, 2-.55f, 2-0.95f, 0.45f, 0.95f, this));
-//        ((Sprite) elements.get(0)).bounds(1,1,1,1);
+        creationListener.accept(this);
     }
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
@@ -81,18 +75,25 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     private final float[] mViewMatrix = new float[16];
     private final float[] backgroundMatrix = {-3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.5f, 1.0f, 0.0f, 0.0f, -3.0f, 3.0f};
 
-    @Override
-    public void onDrawFrame(GL10 unused) {
+    @Override public synchronized void onDrawFrame(GL10 unused) {
+        float delta = 0f;
+        if (lastExecMs>0) {
+            delta = System.currentTimeMillis() - lastExecMs;
+        }
+        lastExecMs = System.currentTimeMillis();
+        for (var v : Exec) v.accept(this);
+        Exec.clear();
+
+        for (var v : drawListeners) v.accept(this, delta);
 
         // Draw background color
-        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
+        GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT | GLES32.GL_DEPTH_BUFFER_BIT);
 
-        GLES30.glEnable(GLES30.GL_BLEND);
-        GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA);
+        GLES32.glEnable(GLES32.GL_BLEND);
+        GLES32.glBlendFunc(GLES32.GL_SRC_ALPHA, GLES32.GL_ONE_MINUS_SRC_ALPHA);
 
         // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0, -0, 0f, -3f, .0f, 0.0f, 0f, .0f, 1.0f, 0.0f);
-        var v = new float[16];
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, camera.getProjectionMatrix(), 0, mViewMatrix, 0);
@@ -112,7 +113,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         float height1 = context.getHeight();
         float relation = height1/1080;
         viewportBuffer = (int) (context.getWidth() - (1920*relation));
-        GLES30.glViewport(viewportBuffer/2,0, (int) (1920*relation), (int) (1080*relation));
+        GLES32.glViewport(viewportBuffer/2,0, (int) (1920*relation), (int) (1080*relation));
 
         camera.updateProjection();
     }
@@ -133,13 +134,13 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
      */
     public static int loadShader(int type, String shaderCode){
 
-        // create a vertex shader type (GLES30.GL_VERTEX_SHADER)
-        // or a fragment shader type (GLES30.GL_FRAGMENT_SHADER)
-        int shader = GLES30.glCreateShader(type);
+        // create a vertex shader type (GLES32.GL_VERTEX_SHADER)
+        // or a fragment shader type (GLES32.GL_FRAGMENT_SHADER)
+        int shader = GLES32.glCreateShader(type);
 
         // add the source code to the shader and compile it
-        GLES30.glShaderSource(shader, shaderCode);
-        GLES30.glCompileShader(shader);
+        GLES32.glShaderSource(shader, shaderCode);
+        GLES32.glCompileShader(shader);
 
         return shader;
     }
@@ -149,7 +150,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     * just after making it:
     *
     * <pre>
-    * mColorHandle = GLES30.glGetUniformLocation(mProgram, "vColor");
+    * mColorHandle = GLES32.glGetUniformLocation(mProgram, "vColor");
     * MyGLRenderer.checkGlError("glGetUniformLocation");</pre>
     *
     * If the operation is not successful, the check throws an error.
@@ -158,10 +159,13 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     */
     public static void checkGlError(String glOperation) {
         int error;
-        while ((error = GLES30.glGetError()) != GLES30.GL_NO_ERROR) {
+        while ((error = GLES32.glGetError()) != GLES32.GL_NO_ERROR) {
             Log.e(TAG, glOperation + ": glError " + error);
             throw new RuntimeException(glOperation + ": glError " + error);
         }
     }
+    public synchronized void addExec(Consumer<GLRenderer> render) {Exec.add(render);}
+    public synchronized void addDrawListener(BiConsumer<GLRenderer, Float> render) {drawListeners.add(render);}
 
+    public void setCreationListener(Consumer<GLRenderer> start) {this.creationListener = start;}
 }

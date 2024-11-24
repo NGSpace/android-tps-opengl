@@ -1,19 +1,17 @@
-package io.github.ngspace.topdownshooter.opengl;
+package io.github.ngspace.topdownshooter.engine.opengl;
 
 import android.app.Activity;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
-public class OpenGLActivity extends Activity {
+public abstract class OpenGLActivity extends Activity {
 
     public static float realWidth;
     public static float realHeight;
+    protected GLRenderer renderer;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);// TODO Remove this when done debugging
         View decorView = getWindow().getDecorView();
@@ -27,7 +25,8 @@ public class OpenGLActivity extends Activity {
 
         // Create a GLSurfaceView instance and set it
         // as the ContentView for this Activity.
-        android.opengl.GLSurfaceView gLView = new OpenGLSurfaceView(this);
+        OpenGLSurfaceView gLView = new OpenGLSurfaceView(this);
+        this.renderer = gLView.getRenderer();
         setContentView(gLView);
     }
 }

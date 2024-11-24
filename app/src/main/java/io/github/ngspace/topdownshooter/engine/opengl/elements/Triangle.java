@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter.opengl.elements;
+package io.github.ngspace.topdownshooter.engine.opengl.elements;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import android.content.res.Resources;
 import android.graphics.RectF;
-import android.opengl.GLES30;
+import android.opengl.GLES32;
 import android.opengl.Matrix;
-import android.util.Log;
 import android.view.MotionEvent;
 
-import io.github.ngspace.topdownshooter.opengl.GLRenderer;
+import io.github.ngspace.topdownshooter.engine.opengl.GLRenderer;
 
 /**
  * A two-dimensional triangle for use as a drawn object in OpenGL ES 3.1
  *
  * actually fails with the 300.  I do not have a clue what it doesn't work.
  */
-public class Triangle implements Shape {
+public class Triangle extends Shape {
 
     private final String vertexShaderCode =
         // This matrix member variable provides a hook to manipulate
@@ -98,14 +96,14 @@ public class Triangle implements Shape {
 
         // prepare shaders and OpenGL program
         int vertexShader = GLRenderer.loadShader(
-            GLES30.GL_VERTEX_SHADER, vertexShaderCode);
+            GLES32.GL_VERTEX_SHADER, vertexShaderCode);
         int fragmentShader = GLRenderer.loadShader(
-            GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            GLES32.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
-        mProgram = GLES30.glCreateProgram();             // create empty OpenGL Program
-        GLES30.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
-        GLES30.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
-        GLES30.glLinkProgram(mProgram);                  // create OpenGL program executables
+        mProgram = GLES32.glCreateProgram();             // create empty OpenGL Program
+        GLES32.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
+        GLES32.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
+        GLES32.glLinkProgram(mProgram);                  // create OpenGL program executables
 
     }
 
@@ -126,58 +124,50 @@ public class Triangle implements Shape {
         Matrix.multiplyMM(scratch, 0, mvpMatrix, 0, mRotationMatrix, 0);
 
         // Add program to OpenGL environment
-        GLES30.glUseProgram(mProgram);
+        GLES32.glUseProgram(mProgram);
 
         // get handle to vertex shader's vPosition member
-        mPositionHandle = GLES30.glGetAttribLocation(mProgram, "vPosition");
+        mPositionHandle = GLES32.glGetAttribLocation(mProgram, "vPosition");
 
         // Enable a handle to the triangle vertices
-        GLES30.glEnableVertexAttribArray(mPositionHandle);
+        GLES32.glEnableVertexAttribArray(mPositionHandle);
 
         // Prepare the triangle coordinate data
-        GLES30.glVertexAttribPointer(
+        GLES32.glVertexAttribPointer(
             mPositionHandle, COORDS_PER_VERTEX,
-            GLES30.GL_FLOAT, false,
+            GLES32.GL_FLOAT, false,
             vertexStride, vertexBuffer);
 
         // get handle to fragment shader's vColor member
-        mColorHandle = GLES30.glGetUniformLocation(mProgram, "vColor");
+        mColorHandle = GLES32.glGetUniformLocation(mProgram, "vColor");
 
         // Set color for drawing the triangle
-        GLES30.glUniform4fv(mColorHandle, 1, color, 0);
+        GLES32.glUniform4fv(mColorHandle, 1, color, 0);
 
         // get handle to shape's transformation matrix
-        mMVPMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMVPMatrix");
+        mMVPMatrixHandle = GLES32.glGetUniformLocation(mProgram, "uMVPMatrix");
         GLRenderer.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
-        GLES30.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, scratch, 0);
+        GLES32.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, scratch, 0);
         GLRenderer.checkGlError("glUniformMatrix4fv");
 
         // Draw the triangle
-        GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, vertexCount);
+        GLES32.glDrawArrays(GLES32.GL_TRIANGLES, 0, vertexCount);
 
         // Disable vertex array
-        GLES30.glDisableVertexAttribArray(mPositionHandle);
+        GLES32.glDisableVertexAttribArray(mPositionHandle);
     }
 
-    @Override
-    public RectF getBounds() {
-        return new RectF(0,0,0,0);
+    @Override public RectF getBounds() {return new RectF(0,0,2,2);}
+
+
+    @Override public void setBounds(float x, float y, float width, float height) {
+        throw new UnsupportedOperationException("Unused method, not necessary to fill.");
     }
 
-    @Override
-    public void touchDown(MotionEvent e, float x, float y) {
-        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-        int height = Resources.getSystem().getDisplayMetrics().heightPixels;
 
-        float spacex = ((x/width)*2 );
-        float spacey = ((y/height)*2);
-
-        float hyp = (float) Math.sqrt(Math.pow(spacex,2) + Math.pow(spacey,2));
-
-        angle = (float) (Math.acos(spacey/hyp)/Math.PI) * 360;
-    }
-    @Override public void touchDrag(MotionEvent e, float x, float y) {}
-    @Override public void touchUp(MotionEvent e, float x, float y) {}
+    @Override public boolean touchDown(MotionEvent e, float x, float y) {return false;}
+    @Override public boolean touchDrag(MotionEvent e, float x, float y) {return false;}
+    @Override public boolean touchUp(MotionEvent e, float x, float y) {return false;}
 }
