@@ -19,12 +19,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import android.graphics.RectF;
 import android.opengl.GLES32;
 import android.opengl.Matrix;
 import android.view.MotionEvent;
 
-import io.github.ngspace.topdownshooter.engine.opengl.GLRenderer;
+import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
 
 /**
  * A two-dimensional triangle for use as a drawn object in OpenGL ES 3.1
@@ -159,7 +158,7 @@ public class Triangle extends Shape {
         GLES32.glDisableVertexAttribArray(mPositionHandle);
     }
 
-    @Override public RectF getBounds() {return new RectF(0,0,2,2);}
+    @Override public Bounds getBounds() {return new Bounds(0,0,2,2);}
 
 
     @Override public void setBounds(float x, float y, float width, float height) {

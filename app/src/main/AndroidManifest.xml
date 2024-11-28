@@ -19,7 +19,9 @@
         <activity
             android:name=".TestGameActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".engine.opengl.OpenGLActivity"
             android:exported="false"
@@ -31,7 +33,7 @@
             android:exported="true"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            tools:ignore="DiscouragedApi">
+            tools:ignore="DiscouragedApi" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

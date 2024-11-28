@@ -1,39 +1,23 @@
-/*
- * Copyright (C) 2011 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.github.ngspace.topdownshooter.engine.opengl.elements;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 import android.opengl.GLES32;
 import android.view.MotionEvent;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+
 import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
 import io.github.ngspace.topdownshooter.engine.opengl.renderer.Shaders;
 
-/**
- * A two-dimensional square for use as a drawn object in OpenGL ES 3.0.
- */
-public class Square extends Shape {
+public class PostProc extends Shape {
 
     private final FloatBuffer vertexBuffer;
     private final ShortBuffer drawListBuffer;
     private final int mProgram;
+    public IntBuffer buffer = IntBuffer.allocate(1);
     private int mPositionHandle;
     private int mColorHandle;
     private int mMVPMatrixHandle;
@@ -43,8 +27,8 @@ public class Square extends Shape {
     static float[] squareCoords = {
             -1.0f,  1.0f,   // top left
             -1.0f, -1.0f,   // bottom left
-             1.0f, -1.0f,   // bottom right
-             1.0f,  1.0f};  // top right
+            1.0f, -1.0f,   // bottom right
+            1.0f,  1.0f}; // top right
 
     private final short[] drawOrder = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
 
@@ -53,11 +37,9 @@ public class Square extends Shape {
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
      */
-    public Square() {
+    public PostProc() {
         // initialize vertex byte buffer for shape coordinates
-        ByteBuffer bb = ByteBuffer.allocateDirect(
-        // (# of coordinate values * 4 bytes per float)
-                squareCoords.length * 4);
+        ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(squareCoords);
@@ -72,13 +54,16 @@ public class Square extends Shape {
         drawListBuffer.position(0);
 
         // prepare shaders and OpenGL program
-        int vertexShader = GLRenderer.loadShader(GLES32.GL_VERTEX_SHADER, Shaders.SQUARE_VERT_SHADER);
-        int fragmentShader = GLRenderer.loadShader(GLES32.GL_FRAGMENT_SHADER, Shaders.SQUARE_FRAG_SHADER);
+        int vertexShader = GLRenderer.loadShader(GLES32.GL_VERTEX_SHADER, Shaders.POSTPROC_2D_VERT_SHADER);
+        int fragmentShader = GLRenderer.loadShader(GLES32.GL_FRAGMENT_SHADER, Shaders.POSTPROC_2D_FRAG_SHADER);
 
         mProgram = GLES32.glCreateProgram();             // create empty OpenGL Program
         GLES32.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
         GLES32.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
         GLES32.glLinkProgram(mProgram);                  // create OpenGL program executables
+
+        GLES32.glGenFramebuffers(1, buffer);
+        GLES32.glBindFramebuffer(GLES32.GL_FRAMEBUFFER,buffer.get(0));
     }
 
     /**
@@ -137,4 +122,8 @@ public class Square extends Shape {
     @Override public boolean touchDown(MotionEvent e, float x, float y) {return false;}
     @Override public boolean touchDrag(MotionEvent e, float x, float y) {return false;}
     @Override public boolean touchUp  (MotionEvent e, float x, float y) {return false;}
+
+    public void preDraw(GLRenderer glRenderer) {
+
+    }
 }

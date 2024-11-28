@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-24T19:10:57.414005639Z">
+        <DropdownSelection timestamp="2024-11-28T11:43:44.285711788Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/home/computer/.var/app/com.google.AndroidStudio/config/.android/avd/Pixel_2_XL_API_30.avd" />
@@ -15,7 +15,7 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="Default" identifier="serial=&lt;unknown&gt;;connection=1dc0eb68" />
+                <DeviceId pluginId="PhysicalDevice" identifier="serial=R5CT340Q9XW" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
@@ -25,6 +25,9 @@
             </Target>
           </targets>
         </DialogSelection>
+      </SelectionState>
+      <SelectionState runConfigName="TestGameActivity">
+        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>

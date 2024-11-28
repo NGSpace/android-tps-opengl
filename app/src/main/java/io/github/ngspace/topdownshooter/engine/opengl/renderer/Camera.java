@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.engine.opengl;
+package io.github.ngspace.topdownshooter.engine.opengl.renderer;
 
 import android.opengl.Matrix;
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,12 +7,13 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     tools:context=".MainActivity"
+    android:scaleType="fitXY"
     tools:ignore="Deprecated">
 
     <ImageView
         android:id="@+id/rotatinglogo"
         android:layout_width="match_parent"
-        android:layout_height="339dp"
+        android:layout_height="match_parent"
         android:layout_x="0dp"
         android:layout_y="0dp"
         android:contentDescription="@string/failedtoload"
@@ -20,16 +21,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="91dp"
-        android:layout_x="0dp"
-        android:layout_y="324dp"
-        android:text="NGS™"
+        android:layout_width="328dp"
+        android:layout_height="92dp"
+        android:text="NGS"
         android:textAlignment="center"
-        app:autoSizeTextType="uniform" />
+        android:textColor="#FFFFFF"
+        android:textSize="67sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
-</AbsoluteLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

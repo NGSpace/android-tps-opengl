@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
 import io.github.ngspace.topdownshooter.engine.opengl.elements.Shape;
 
 /**
@@ -17,57 +18,56 @@ import io.github.ngspace.topdownshooter.engine.opengl.elements.Shape;
  */
 public class OpenGLSurfaceView extends GLSurfaceView {
 
-    private final GLRenderer mRenderer;
-    public static Context context;
+    private final GLRenderer renderer;
+
+    List<Shape> liftedElements = new ArrayList<Shape>();
 
     public OpenGLSurfaceView(Context context) {
         super(context);
-        this.context = context;
         // Create an OpenGL ES 3.0 context.
         setEGLContextClientVersion(3);
 
         // Set the Renderer for drawing on the GLSurfaceView
-        setRenderer((mRenderer = new GLRenderer(this)));
+        setRenderer(renderer = new GLRenderer(this));
 
         // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-    }
 
-    List<Shape> liftedElements = new ArrayList<Shape>();
+    }
 
     @Override public boolean onTouchEvent(MotionEvent e) {
         float x = e.getX();
         float y = e.getY();
-        var viewport = mRenderer.toViewport(x,y);
+        var viewport = renderer.toViewport(x,y);
         x = viewport.x;
         y = viewport.y;
-//        if (e.getAction()!=MotionEvent.ACTION_MOVE) {
-//            MainActivity.log(x + "  " + e.getActionMasked());
-//            MainActivity.log(e.getAction()& e.ACTION_MASK);
-//        }
-        if (e.getAction()==MotionEvent.ACTION_DOWN) {
-            for (Shape s : reverse(mRenderer.elements)) {
-                if (s.intersects(x,y)) {
-                    if (s.touchDown(e, x, y)) {
-                        liftedElements.add(s);
-                        return true;
-                    }
-                }
-            }
+        int action = e.getActionMasked();
+        if (action==MotionEvent.ACTION_DOWN) {
+            if (processTouch(e,x,y,renderer.hudelements)) return true;
+            if (processTouch(e,x,y,renderer.elements)) return true;
         }
         for (var s : liftedElements) {
-            if (e.getAction()==MotionEvent.ACTION_MOVE) s.touchDrag(e, x, y);
-            if (e.getAction()==MotionEvent.ACTION_UP) {
+            if (action==MotionEvent.ACTION_MOVE) s.touchDrag(e, x, y);
+            if (action==MotionEvent.ACTION_UP) {
                 s.touchUp(e, x, y);
                 liftedElements.remove(s);
             }
         }
         return !liftedElements.isEmpty();
     }
-    static <T> List<T> reverse(final List<T> list) {
-        final List<T> result = new ArrayList<>(list);
-        Collections.reverse(result);
-        return result;
+
+    private boolean processTouch(MotionEvent e, float x, float y, List<Shape> elements) {
+        final List<Shape> reversedelements = new ArrayList<>(elements);
+        Collections.reverse(reversedelements);
+        for (Shape s : reversedelements) {
+            if (s.contains(x,y)) {
+                if (s.touchDown(e, x, y)) {
+                    liftedElements.add(s);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
-    public GLRenderer getRenderer() {return mRenderer;}
+    public GLRenderer getRenderer() {return renderer;}
 }

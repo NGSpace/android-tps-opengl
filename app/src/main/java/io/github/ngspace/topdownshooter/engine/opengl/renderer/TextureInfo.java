@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.engine.opengl;
+package io.github.ngspace.topdownshooter.engine.opengl.renderer;
 
 public class TextureInfo {
     public float[] textureCoordinate = new float[]{
@@ -9,7 +9,5 @@ public class TextureInfo {
     };
     public int textureDataHandle = 1;
 
-    TextureInfo(int textureDataHandle) {
-        this.textureDataHandle = textureDataHandle;
-    }
+    TextureInfo(int textureDataHandle) {this.textureDataHandle = textureDataHandle;}
 }

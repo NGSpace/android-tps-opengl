@@ -1,18 +1,16 @@
 package io.github.ngspace.topdownshooter.engine.opengl.elements;
 
-import android.graphics.RectF;
 import android.opengl.GLES32;
 import android.opengl.Matrix;
-import android.view.MotionEvent;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import io.github.ngspace.topdownshooter.engine.opengl.GLRenderer;
-import io.github.ngspace.topdownshooter.engine.opengl.Shaders;
-import io.github.ngspace.topdownshooter.engine.opengl.TextureInfo;
+import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
+import io.github.ngspace.topdownshooter.engine.opengl.renderer.Shaders;
+import io.github.ngspace.topdownshooter.engine.opengl.renderer.TextureInfo;
 
 public class Sprite extends Shape {
 
@@ -30,6 +28,9 @@ public class Sprite extends Shape {
     private final int shaderProgram;
     private FloatBuffer vertexBuffer;
     private final ShortBuffer drawListBuffer;
+    int mMVPMatrixHandle;
+    int mColorHandle;
+    int mPositionHandle;
 
     // number of coordinates per vertex in this array
     final int COORDS_PER_VERTEX = 2;
@@ -47,9 +48,8 @@ public class Sprite extends Shape {
     private float height;
     boolean ispressed = false;
 
-    public Sprite(TextureInfo texture, float x, float y, float width, float height, GLRenderer renderer) {
+    public Sprite(TextureInfo texture, float x, float y, float width, float height) {
         this.texture = texture;
-        this.renderer = renderer;
         setBounds(x,y,width,height);
 
         //Initialize byte buffer for the draw list
@@ -87,7 +87,7 @@ public class Sprite extends Shape {
         GLES32.glUseProgram(shaderProgram);
 
         //Get handle to vertex shader's vPosition member
-        int mPositionHandle = GLES32.glGetAttribLocation(shaderProgram, "vPosition");
+        mPositionHandle = GLES32.glGetAttribLocation(shaderProgram, "vPosition");
 
         //Enable a handle to the triangle vertices
         GLES32.glEnableVertexAttribArray(mPositionHandle);
@@ -96,7 +96,7 @@ public class Sprite extends Shape {
         GLES32.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX, GLES32.GL_FLOAT, false, vertexStride, vertexBuffer);
 
         //Get Handle to Fragment Shader's vColor member
-        int mColorHandle = GLES32.glGetUniformLocation(shaderProgram, "vAlpha");
+        mColorHandle = GLES32.glGetUniformLocation(shaderProgram, "vAlpha");
 
         //Set the Color for drawing the triangle
         GLES32.glUniform1f(mColorHandle, alpha);
@@ -120,7 +120,7 @@ public class Sprite extends Shape {
         GLES32.glEnableVertexAttribArray(mTextureCoordinateHandle);
 
         //Get Handle to Shape's Transformation Matrix
-        int mMVPMatrixHandle = GLES32.glGetUniformLocation(shaderProgram, "uMVPMatrix");
+        mMVPMatrixHandle = GLES32.glGetUniformLocation(shaderProgram, "uMVPMatrix");
 
         //Apply the projection and view transformation
         GLES32.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, scratch, 0);
@@ -132,10 +132,9 @@ public class Sprite extends Shape {
         GLES32.glDisableVertexAttribArray(mPositionHandle);
     }
 
-    @Override
-    public RectF getBounds() {return new RectF(x, y, x+width, y+height);}
+    @Override  public Bounds getBounds() {return new Bounds(x, y, width, height);}
 
-    public void setBounds(float x, float y, float width, float height) {
+    @Override public void setBounds(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -145,7 +144,7 @@ public class Sprite extends Shape {
         spriteCoords = new float[] {realx, realy-height,   // top left
                 realx-width, realy-height,   // bottom left
                 realx-width, realy,   // bottom right
-                realx, realy}; //top right
+                realx, realy};   //top right
         //Initialize Vertex Byte Buffer for Shape Coordinates / # of coordinate values * 4 bytes per float
         ByteBuffer bb = ByteBuffer.allocateDirect(spriteCoords.length * 4);
         //Use the Device's Native Byte Order
@@ -156,28 +155,6 @@ public class Sprite extends Shape {
         vertexBuffer.put(spriteCoords);
         //Set the Buffer to Read the first coordinate
         vertexBuffer.position(0);
-    }
-
-    @Override public boolean touchUp(MotionEvent e, float x, float y) {
-        ispressed = false;
-        float xpos = 0;
-        float ypos = 0;
-        if (1.25>x&&x>.75) xpos = .5f; else if (x>1.25) xpos = 1f;
-        if (1.25>y&&y>.75) ypos = .5f; else if (y>1.25) ypos = 1f;
-        setBounds(xpos,ypos,width,height);
-        return true;
-    }
-    @Override public boolean touchDown(MotionEvent e, float x, float y) {
-        setBounds(x-.5f,y-.5f,1,1);
-        renderer.addExec(r->r.elements.remove(this));
-        renderer.addExec(r->r.elements.add(this));
-        ispressed = true;
-        return true;
-    }
-    @Override public boolean touchDrag(MotionEvent e, float x, float y) {
-        //renderer.camera.setProjection(x,y);
-        setBounds(x-.5f,y-.5f,1,1);
-        return true;
     }
 
 

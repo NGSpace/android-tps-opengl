@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
+import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
+import io.github.ngspace.topdownshooter.engine.opengl.renderer.Textures;
+
 public abstract class OpenGLActivity extends Activity {
 
     public static float realWidth;

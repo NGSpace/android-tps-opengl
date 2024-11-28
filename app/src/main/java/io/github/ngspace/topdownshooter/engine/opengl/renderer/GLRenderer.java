@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter.engine.opengl;
+package io.github.ngspace.topdownshooter.engine.opengl.renderer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -28,8 +28,10 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import io.github.ngspace.topdownshooter.engine.opengl.OpenGLActivity;
+import io.github.ngspace.topdownshooter.engine.opengl.OpenGLSurfaceView;
+import io.github.ngspace.topdownshooter.engine.opengl.elements.PostProc;
 import io.github.ngspace.topdownshooter.engine.opengl.elements.Shape;
-import io.github.ngspace.topdownshooter.engine.opengl.elements.Sprite;
 import io.github.ngspace.topdownshooter.engine.opengl.elements.Square;
 
 /**
@@ -43,17 +45,15 @@ import io.github.ngspace.topdownshooter.engine.opengl.elements.Square;
  */
 public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 
-    private static final String TAG = "MyGLRenderer";
-//    public Sprite smiley;
-//    public Sprite background;
-
-    public List<Shape> elements = new ArrayList<>();
+    public List<Shape> elements = new ArrayList<Shape>();
+    public List<Shape> hudelements = new ArrayList<Shape>();
     public List<Consumer<GLRenderer>> Exec = new ArrayList<>();
     public List<BiConsumer<GLRenderer, Float>> drawListeners = new ArrayList<>();
 
     OpenGLSurfaceView context;
     public Camera camera = new Camera();
     public Shape background;
+    public PostProc postProcessing;
 
     private float lastExecMs = 0;
     private Consumer<GLRenderer> creationListener;
@@ -61,10 +61,12 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     public GLRenderer(OpenGLSurfaceView OpenGLSurfaceView) {
         this.context = OpenGLSurfaceView;
     }
+    int fbo;
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLES32.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        Textures.loadTextures(context.getContext());
         background = new Square();
 
         creationListener.accept(this);
@@ -73,9 +75,10 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
-    private final float[] backgroundMatrix = {-3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.5f, 1.0f, 0.0f, 0.0f, -3.0f, 3.0f};
+    private final float[] hudMatrix = {-3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.5f, 1.0f, 0.0f, 0.0f, -3.0f, 3.0f};
 
-    @Override public synchronized void onDrawFrame(GL10 unused) {
+    @Override public void onDrawFrame(GL10 unused) {
+//        postProcessing.preDraw(this);
         float delta = 0f;
         if (lastExecMs>0) {
             delta = System.currentTimeMillis() - lastExecMs;
@@ -87,7 +90,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         for (var v : drawListeners) v.accept(this, delta);
 
         // Draw background color
-        GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT | GLES32.GL_DEPTH_BUFFER_BIT);
+        GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT | GLES32.GL_DEPTH_BUFFER_BIT | GLES32.GL_STENCIL_BUFFER_BIT);
 
         GLES32.glEnable(GLES32.GL_BLEND);
         GLES32.glBlendFunc(GLES32.GL_SRC_ALPHA, GLES32.GL_ONE_MINUS_SRC_ALPHA);
@@ -99,9 +102,13 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         Matrix.multiplyMM(mMVPMatrix, 0, camera.getProjectionMatrix(), 0, mViewMatrix, 0);
 
         // Draw background
-        background.draw(backgroundMatrix);
+        background.draw(hudMatrix);
         // Draw elements
         for (Shape shape : elements) shape.draw(mMVPMatrix);
+        // Draw Post-Processing effects
+        if (postProcessing!=null) postProcessing.draw(hudMatrix);
+        // Draw Hud
+        for (Shape shape : hudelements) shape.draw(hudMatrix);
     }
 
     int viewportBuffer;
@@ -160,7 +167,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     public static void checkGlError(String glOperation) {
         int error;
         while ((error = GLES32.glGetError()) != GLES32.GL_NO_ERROR) {
-            Log.e(TAG, glOperation + ": glError " + error);
+            Log.e("NGSPACEly", glOperation + ": glError " + error);
             throw new RuntimeException(glOperation + ": glError " + error);
         }
     }

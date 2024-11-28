@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.engine.opengl;
+package io.github.ngspace.topdownshooter.engine.opengl.renderer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,8 +13,11 @@ public class Shaders {
     public static final String TEXTURE_2D_FRAG_SHADER = readShader(R.raw.texture_2d_frag);
     public static final String SQUARE_VERT_SHADER = readShader(R.raw.square_vert);
     public static final String SQUARE_FRAG_SHADER = readShader(R.raw.square_frag);
+    public static final String POSTPROC_2D_VERT_SHADER = readShader(R.raw.postproc_vert);
+    public static final String POSTPROC_2D_FRAG_SHADER = readShader(R.raw.postproc_frag);
 
     public static String readShader(int id) {
+//        MainActivity.log(Shaders.class.getClassLoader().getResourceAsStream(""));
         try (InputStream is = MainActivity.globalContext.getResources().openRawResource(id)) {
             var reader = new Scanner(is);
             StringBuilder result = new StringBuilder();

@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import io.github.ngspace.topdownshooter.engine.opengl.OpenGLActivity;
+import io.github.ngspace.topdownshooter.engine.opengl.renderer.Textures;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(()-> {
             Intent intent = new Intent(this, TestGameActivity.class);
             startActivity(intent);
-        }, 001);
+        }, 1);//TODO one day change this back to 3000
 
         findViewById(R.id.rotatinglogo).animate().setInterpolator(new LinearInterpolator()).setDuration(3500).rotation(410).start();
     }

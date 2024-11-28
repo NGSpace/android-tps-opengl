@@ -4,5 +4,6 @@ uniform vec4 vColor;
 out vec4 fragColor;
 void main()
 {
-    fragColor = vColor;
+    if (fragColor.r>0.0) discard;
+    fragColor = vec4(1.0,0.0,.0,1);
 }

@@ -2,7 +2,7 @@ package io.github.ngspace.topdownshooter.engine;
 
 import android.os.Bundle;
 
-import io.github.ngspace.topdownshooter.engine.opengl.GLRenderer;
+import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
 import io.github.ngspace.topdownshooter.engine.opengl.OpenGLActivity;
 
 public abstract class GameActivity extends OpenGLActivity {

@@ -1,6 +1,5 @@
 package io.github.ngspace.topdownshooter.engine.opengl.elements;
 
-import android.graphics.RectF;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -22,36 +21,37 @@ public abstract class Shape {
 
     public boolean touchDown(MotionEvent e, float x, float y) {
         pressed = true;
-        for (TouchEventListener listener : downListeners) listener.exec(e,x,y);
+        for (TouchEventListener listener : downListeners) listener.exec(this,x,y);
         return true;
     }
     public boolean touchDrag(MotionEvent e, float x, float y) {
-        for (TouchEventListener listener : dragListeners) listener.exec(e,x,y);
+        for (TouchEventListener listener : dragListeners) listener.exec(this,x,y);
         return true;
     }
     public boolean touchUp(MotionEvent e, float x, float y) {
         pressed = false;
-        for (TouchEventListener listener : upListeners) listener.exec(e,x,y);
+        for (TouchEventListener listener : upListeners) listener.exec(this,x,y);
         return true;
     }
 
     // Listeners
     public void addTouchDownListener(TouchEventListener listener) {downListeners.add(listener);}
     public void addTouchDragListener(TouchEventListener listener) {dragListeners.add(listener);}
-    public void addTouchUpListener(TouchEventListener listener) {downListeners.add(listener);}
+    public void addTouchUpListener(TouchEventListener listener) {upListeners.add(listener);}
 
     public boolean isPressed() {return pressed;}
 
 
 
-    public abstract RectF getBounds();
+    public abstract Bounds getBounds();
     public abstract void setBounds(float x, float y, float width, float height);
+    public void setBounds(Bounds bounds) {setBounds(bounds.x(), bounds.y(), bounds.width(), bounds.height());}
 
-    public boolean intersects(RectF bounds) {return getBounds().intersect(bounds);}
-    public boolean intersects(float x, float y) {return getBounds().contains(x, y);}
+    public boolean intersects(Bounds bounds) {return getBounds().intersects(bounds);}
+    public boolean contains(float x, float y) {return getBounds().contains(x, y);}
 
-    public float getX() {return  getBounds().left;}
-    public float getY() {return  getBounds().top;}
-    public float getWidth() {return  getBounds().right-getBounds().left;}
-    public float getHeight() {return  getBounds().bottom-getBounds().top;}
+    public float getX() {return  getBounds().x();}
+    public float getY() {return  getBounds().y();}
+    public float getWidth() {return  getBounds().width();}
+    public float getHeight() {return  getBounds().height();}
 }
