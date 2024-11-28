@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter.engine.opengl.elements;
+package io.github.ngspace.topdownshooter.renderer.opengl.elements;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -21,10 +21,10 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import android.opengl.GLES32;
-import android.view.MotionEvent;
 
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.Shaders;
+import io.github.ngspace.topdownshooter.renderer.opengl.Bounds;
+import io.github.ngspace.topdownshooter.renderer.opengl.renderer.GLRenderer;
+import io.github.ngspace.topdownshooter.renderer.opengl.renderer.Shaders;
 
 /**
  * A two-dimensional square for use as a drawn object in OpenGL ES 3.0.
@@ -41,10 +41,10 @@ public class Square extends Shape {
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 2;
     static float[] squareCoords = {
-            -1.0f,  1.0f,   // top left
-            -1.0f, -1.0f,   // bottom left
-             1.0f, -1.0f,   // bottom right
-             1.0f,  1.0f};  // top right
+            -960f, -540f,   // top left
+            -960f,  540f,   // bottom left
+             960f,  540f,   // bottom right
+             960f, -540f};  // top right
 
     private final short[] drawOrder = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
 
@@ -133,8 +133,4 @@ public class Square extends Shape {
     @Override public void setBounds(float x, float y, float width, float height) {
         throw new UnsupportedOperationException("Unused method, not necessary to fill.");
     }
-
-    @Override public boolean touchDown(MotionEvent e, float x, float y) {return false;}
-    @Override public boolean touchDrag(MotionEvent e, float x, float y) {return false;}
-    @Override public boolean touchUp  (MotionEvent e, float x, float y) {return false;}
 }

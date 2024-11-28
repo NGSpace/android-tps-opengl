@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter.engine.opengl.renderer;
+package io.github.ngspace.topdownshooter.renderer.opengl.renderer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.graphics.PointF;
+import android.graphics.Point;
 import android.opengl.GLES32;
 import android.opengl.Matrix;
 import android.util.Log;
@@ -28,11 +28,10 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import io.github.ngspace.topdownshooter.engine.opengl.OpenGLActivity;
-import io.github.ngspace.topdownshooter.engine.opengl.OpenGLSurfaceView;
-import io.github.ngspace.topdownshooter.engine.opengl.elements.PostProc;
-import io.github.ngspace.topdownshooter.engine.opengl.elements.Shape;
-import io.github.ngspace.topdownshooter.engine.opengl.elements.Square;
+import io.github.ngspace.topdownshooter.renderer.opengl.OpenGLSurfaceView;
+import io.github.ngspace.topdownshooter.renderer.opengl.elements.PostProc;
+import io.github.ngspace.topdownshooter.renderer.opengl.elements.Shape;
+import io.github.ngspace.topdownshooter.renderer.opengl.elements.Texture;
 
 /**
  * Provides drawing instructions for a GLSurfaceView object. This class
@@ -46,7 +45,9 @@ import io.github.ngspace.topdownshooter.engine.opengl.elements.Square;
 public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 
     public List<Shape> elements = new ArrayList<Shape>();
-    public List<Shape> hudelements = new ArrayList<Shape>();
+    public List<Shape> topelements = new ArrayList<Shape>();
+    public List<Shape> touchelements = new ArrayList<Shape>();
+    public List<Shape> toptouchelements = new ArrayList<Shape>();
     public List<Consumer<GLRenderer>> Exec = new ArrayList<>();
     public List<BiConsumer<GLRenderer, Float>> drawListeners = new ArrayList<>();
 
@@ -67,7 +68,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLES32.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         Textures.loadTextures(context.getContext());
-        background = new Square();
+        background = new Texture(Textures.STARSET,0,0,1920,1080);
 
         creationListener.accept(this);
     }
@@ -78,7 +79,6 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     private final float[] hudMatrix = {-3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.5f, 1.0f, 0.0f, 0.0f, -3.0f, 3.0f};
 
     @Override public void onDrawFrame(GL10 unused) {
-//        postProcessing.preDraw(this);
         float delta = 0f;
         if (lastExecMs>0) {
             delta = System.currentTimeMillis() - lastExecMs;
@@ -100,34 +100,27 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, camera.getProjectionMatrix(), 0, mViewMatrix, 0);
+        Matrix.multiplyMM(hudMatrix, 0, camera.getHudProjectionMatrix(), 0, mViewMatrix, 0);
 
         // Draw background
-        background.draw(hudMatrix);
+        background.render(mMVPMatrix);//TODO change this back to hud
         // Draw elements
-        for (Shape shape : elements) shape.draw(mMVPMatrix);
+        for (Shape shape : elements) shape.render(mMVPMatrix);
         // Draw Post-Processing effects
-        if (postProcessing!=null) postProcessing.draw(hudMatrix);
+        if (postProcessing!=null) postProcessing.render(hudMatrix);
         // Draw Hud
-        for (Shape shape : hudelements) shape.draw(hudMatrix);
+        for (Shape shape : topelements) shape.render(hudMatrix);
     }
 
-    int viewportBuffer;
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
-        // Adjust the viewport based on geometry changes,
-        // such as screen rotation
-        float height1 = context.getHeight();
-        float relation = height1/1080;
-        viewportBuffer = (int) (context.getWidth() - (1920*relation));
-        GLES32.glViewport(viewportBuffer/2,0, (int) (1920*relation), (int) (1080*relation));
-
+        camera.updateViewport(context);
         camera.updateProjection();
     }
 
-    public PointF toViewport(float x, float y) {
-        return new PointF(((x-viewportBuffer/2f)/(OpenGLActivity.realWidth-viewportBuffer))*2, (y/OpenGLActivity.realHeight)*2);
-    }
+    public Point toViewport(int x, int y) {return camera.toViewport(x,y);}
+    public Point toHudViewport(int x, int y) {return camera.toHudViewport(x,y);}
 
     /**
      * Utility method for compiling a OpenGL shader.
@@ -135,8 +128,8 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
      * <p><strong>Note:</strong> When developing shaders, use the checkGlError()
      * method to debug shader coding errors.</p>
      *
-     * @param type - Vertex or fragment shader type.
-     * @param shaderCode - String containing the shader code.
+     * @param type Vertex or fragment shader type.
+     * @param shaderCode String containing the shader code.
      * @return - Returns an id for the shader.
      */
     public static int loadShader(int type, String shaderCode){
@@ -173,6 +166,13 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     }
     public synchronized void addExec(Consumer<GLRenderer> render) {Exec.add(render);}
     public synchronized void addDrawListener(BiConsumer<GLRenderer, Float> render) {drawListeners.add(render);}
+    public synchronized void addElement(Shape element) {elements.add(element);}
+    public synchronized void addHudElement(Shape element) {
+        topelements.add(element);}
 
     public void setCreationListener(Consumer<GLRenderer> start) {this.creationListener = start;}
+
+    public void addTouchElement(Shape shape) {touchelements.add(shape);}
+    public void addHudTouchElement(Shape shape) {
+        toptouchelements.add(shape);}
 }

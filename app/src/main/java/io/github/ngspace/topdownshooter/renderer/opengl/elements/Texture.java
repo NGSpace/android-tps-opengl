@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.engine.opengl.elements;
+package io.github.ngspace.topdownshooter.renderer.opengl.elements;
 
 import android.opengl.GLES32;
 import android.opengl.Matrix;
@@ -8,14 +8,14 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.Shaders;
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.TextureInfo;
+import io.github.ngspace.topdownshooter.renderer.opengl.Bounds;
+import io.github.ngspace.topdownshooter.renderer.opengl.renderer.GLRenderer;
+import io.github.ngspace.topdownshooter.renderer.opengl.renderer.Shaders;
+import io.github.ngspace.topdownshooter.renderer.opengl.renderer.TextureInfo;
 
-public class Sprite extends Shape {
+public class Texture extends Shape {
 
     private TextureInfo texture;
-    private GLRenderer renderer;
     private float angle = 0;
 
     //Added for Textures
@@ -48,7 +48,7 @@ public class Sprite extends Shape {
     private float height;
     boolean ispressed = false;
 
-    public Sprite(TextureInfo texture, float x, float y, float width, float height) {
+    public Texture(TextureInfo texture, float x, float y, float width, float height) {
         this.texture = texture;
         setBounds(x,y,width,height);
 
@@ -139,8 +139,8 @@ public class Sprite extends Shape {
         this.y = y;
         this.width = width;
         this.height = height;
-        float realx = 1f - x;
-        float realy = 1f - y;
+        float realx = 960f - x;
+        float realy = 540f - y;
         spriteCoords = new float[] {realx, realy-height,   // top left
                 realx-width, realy-height,   // bottom left
                 realx-width, realy,   // bottom right
@@ -168,7 +168,6 @@ public class Sprite extends Shape {
     public float getAngle() {return angle;}
 
     public TextureInfo getTexture() {return texture;}
-    public GLRenderer getRenderer() {return renderer;}
     public int getShaderProgram() {return shaderProgram;}
     public boolean isPressed() {return ispressed;}
 

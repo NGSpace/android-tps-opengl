@@ -1,17 +1,16 @@
-package io.github.ngspace.topdownshooter.engine.opengl;
+package io.github.ngspace.topdownshooter.renderer.opengl;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.Textures;
+import io.github.ngspace.topdownshooter.renderer.opengl.renderer.GLRenderer;
 
 public abstract class OpenGLActivity extends Activity {
 
-    public static float realWidth;
-    public static float realHeight;
+    public static int realWidth;
+    public static int realHeight;
     protected GLRenderer renderer;
 
     @Override public void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,8 @@ public abstract class OpenGLActivity extends Activity {
         // Create a GLSurfaceView instance and set it
         // as the ContentView for this Activity.
         OpenGLSurfaceView gLView = new OpenGLSurfaceView(this);
-        this.renderer = gLView.getRenderer();
+        renderer = gLView.getRenderer();
         setContentView(gLView);
     }
+    public GLRenderer getRenderer() {return renderer;}
 }

@@ -17,8 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import io.github.ngspace.topdownshooter.engine.opengl.OpenGLActivity;
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.Textures;
+import io.github.ngspace.topdownshooter.renderer.opengl.OpenGLActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(()-> {
-            Intent intent = new Intent(this, TestGameActivity.class);
+            Intent intent = new Intent(this, TestGameScene.class);
             startActivity(intent);
         }, 1);//TODO one day change this back to 3000
 

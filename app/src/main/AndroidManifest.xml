@@ -17,13 +17,13 @@
         android:theme="@style/Theme.TopDownShooter"
         tools:targetApi="31">
         <activity
-            android:name=".TestGameActivity"
+            android:name=".TestGameScene"
             android:exported="false"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             tools:ignore="DiscouragedApi" />
         <activity
-            android:name=".engine.opengl.OpenGLActivity"
+            android:name=".renderer.opengl.OpenGLActivity"
             android:exported="false"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"

@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.engine.opengl.elements;
+package io.github.ngspace.topdownshooter.renderer.opengl.elements;
 
 import android.opengl.GLES32;
 import android.view.MotionEvent;
@@ -9,8 +9,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.GLRenderer;
-import io.github.ngspace.topdownshooter.engine.opengl.renderer.Shaders;
+import io.github.ngspace.topdownshooter.renderer.opengl.Bounds;
+import io.github.ngspace.topdownshooter.renderer.opengl.renderer.GLRenderer;
+import io.github.ngspace.topdownshooter.renderer.opengl.renderer.Shaders;
 
 public class PostProc extends Shape {
 
@@ -111,17 +112,15 @@ public class PostProc extends Shape {
         GLES32.glDisableVertexAttribArray(mPositionHandle);
     }
 
-    @Override public Bounds getBounds() {
-        return new Bounds(0,0,2,2);
-    }
+    @Override public Bounds getBounds() {return new Bounds(0,0,2,2);}
 
     @Override public void setBounds(float x, float y, float width, float height) {
         throw new UnsupportedOperationException("Unused method, not necessary to fill.");
     }
 
-    @Override public boolean touchDown(MotionEvent e, float x, float y) {return false;}
-    @Override public boolean touchDrag(MotionEvent e, float x, float y) {return false;}
-    @Override public boolean touchUp  (MotionEvent e, float x, float y) {return false;}
+    @Override public boolean touchDown(MotionEvent e, int x, int y) {return false;}
+    @Override public boolean touchDrag(MotionEvent e, int x, int y) {return false;}
+    @Override public boolean touchUp  (MotionEvent e, int x, int y) {return false;}
 
     public void preDraw(GLRenderer glRenderer) {
 

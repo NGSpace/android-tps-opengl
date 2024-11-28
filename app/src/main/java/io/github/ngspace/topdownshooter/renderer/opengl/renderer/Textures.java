@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.engine.opengl.renderer;
+package io.github.ngspace.topdownshooter.renderer.opengl.renderer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,7 +7,6 @@ import android.opengl.GLES32;
 import android.opengl.GLUtils;
 import android.util.Log;
 
-import io.github.ngspace.topdownshooter.MainActivity;
 import io.github.ngspace.topdownshooter.R;
 
 public class Textures {
