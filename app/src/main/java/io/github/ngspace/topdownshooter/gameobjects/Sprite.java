@@ -1,9 +1,9 @@
 package io.github.ngspace.topdownshooter.gameobjects;
 
-import io.github.ngspace.topdownshooter.renderer.GameScene;
-import io.github.ngspace.topdownshooter.renderer.opengl.Bounds;
-import io.github.ngspace.topdownshooter.renderer.opengl.elements.Texture;
-import io.github.ngspace.topdownshooter.renderer.opengl.renderer.TextureInfo;
+import io.github.ngspace.topdownshooter.engine.GameScene;
+import io.github.ngspace.topdownshooter.utils.Bounds;
+import io.github.ngspace.topdownshooter.renderer.elements.Texture;
+import io.github.ngspace.topdownshooter.renderer.renderer.TextureInfo;
 
 public class Sprite extends AGameObject {
     protected final Texture texture;
@@ -16,8 +16,7 @@ public class Sprite extends AGameObject {
 
     @Override public void init(GameScene scene) {super.init(scene);scene.getRenderer().addElement(texture);}
 
-    @Override public void setBounds(Bounds bounds) {
-        super  .setBounds(bounds);
-        texture.setBounds(bounds);
-    }
+    @Override public void setBounds(Bounds bounds) {super.setBounds(bounds);texture.setBounds(bounds);}
+    @Override public void setAngle(float angle) {super.setAngle(angle);texture.setAngle(angle);}
+    @Override public void setHidden(boolean hidden) {super.setHidden(hidden);texture.setHidden(hidden);}
 }

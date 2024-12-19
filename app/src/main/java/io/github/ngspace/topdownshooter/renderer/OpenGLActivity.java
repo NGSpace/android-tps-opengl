@@ -1,11 +1,11 @@
-package io.github.ngspace.topdownshooter.renderer.opengl;
+package io.github.ngspace.topdownshooter.renderer;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
-import io.github.ngspace.topdownshooter.renderer.opengl.renderer.GLRenderer;
+import io.github.ngspace.topdownshooter.renderer.renderer.GLRenderer;
 
 public abstract class OpenGLActivity extends Activity {
 

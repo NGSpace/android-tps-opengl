@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.renderer.opengl;
+package io.github.ngspace.topdownshooter.utils;
 
 import androidx.annotation.NonNull;
 
@@ -32,9 +32,7 @@ public record Bounds(float x, float y, float width, float height) {
         return true;
     }
 
-    @NonNull
-    @Override
-    public String toString() {
+    @NonNull @Override public String toString() {
         return "Bounds{" +
                 "x=" + x +
                 ", y=" + y +
@@ -43,7 +41,6 @@ public record Bounds(float x, float y, float width, float height) {
                 '}';
     }
 
-    public Bounds add(float x, float y) {
-        return new Bounds(this.x+x, this.y+y, width, height);
-    }
+    public Bounds add(float x, float y) {return new Bounds(this.x+x, this.y+y, width, height);}
+    public Bounds positioned(float newx, float newy) {return new Bounds(newx, newy, width, height);}
 }

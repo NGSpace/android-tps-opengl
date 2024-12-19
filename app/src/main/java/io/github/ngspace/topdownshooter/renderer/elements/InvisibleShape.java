@@ -1,6 +1,6 @@
-package io.github.ngspace.topdownshooter.renderer.opengl.elements;
+package io.github.ngspace.topdownshooter.renderer.elements;
 
-import io.github.ngspace.topdownshooter.renderer.opengl.Bounds;
+import io.github.ngspace.topdownshooter.utils.Bounds;
 
 public class InvisibleShape extends Shape {
 

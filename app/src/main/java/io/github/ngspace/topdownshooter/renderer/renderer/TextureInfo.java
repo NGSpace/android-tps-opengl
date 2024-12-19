@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.renderer.opengl.renderer;
+package io.github.ngspace.topdownshooter.renderer.renderer;
 
 public class TextureInfo {
     public float[] textureCoordinate = new float[]{

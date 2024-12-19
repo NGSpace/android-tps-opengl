@@ -1,16 +1,17 @@
-package io.github.ngspace.topdownshooter.renderer.opengl;
+package io.github.ngspace.topdownshooter.renderer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.github.ngspace.topdownshooter.MainActivity;
-import io.github.ngspace.topdownshooter.renderer.opengl.renderer.GLRenderer;
-import io.github.ngspace.topdownshooter.renderer.opengl.elements.Shape;
+import io.github.ngspace.topdownshooter.renderer.renderer.GLRenderer;
+import io.github.ngspace.topdownshooter.renderer.elements.Shape;
 
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.
@@ -36,6 +37,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override public boolean onTouchEvent(MotionEvent e) {
         var viewport = renderer.toViewport((int)e.getX(),(int)e.getY());
         int x = viewport.x;
@@ -51,6 +53,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         for (var s : liftedElements) {
             boolean hudelement = renderer.toptouchelements.contains(s);
             if (action==MotionEvent.ACTION_MOVE) s.touchDrag(e, hudelement?hudx:x, hudelement?hudy:y);
+
             if (action==MotionEvent.ACTION_UP) {
                 s.touchUp(e, hudelement?hudx:x, hudelement?hudy:y);
                 liftedElements.remove(s);
@@ -73,4 +76,9 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         return false;
     }
     public GLRenderer getRenderer() {return renderer;}
+
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        return super.onKeyDown(keyCode, event);
+    }
 }

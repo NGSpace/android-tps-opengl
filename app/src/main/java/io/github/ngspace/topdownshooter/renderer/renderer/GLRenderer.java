@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ngspace.topdownshooter.renderer.opengl.renderer;
+package io.github.ngspace.topdownshooter.renderer.renderer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -24,14 +24,15 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import io.github.ngspace.topdownshooter.renderer.opengl.OpenGLSurfaceView;
-import io.github.ngspace.topdownshooter.renderer.opengl.elements.PostProc;
-import io.github.ngspace.topdownshooter.renderer.opengl.elements.Shape;
-import io.github.ngspace.topdownshooter.renderer.opengl.elements.Texture;
+import io.github.ngspace.topdownshooter.renderer.OpenGLSurfaceView;
+import io.github.ngspace.topdownshooter.renderer.elements.PostProc;
+import io.github.ngspace.topdownshooter.renderer.elements.Shape;
+import io.github.ngspace.topdownshooter.renderer.elements.Texture;
 
 /**
  * Provides drawing instructions for a GLSurfaceView object. This class
@@ -59,10 +60,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     private float lastExecMs = 0;
     private Consumer<GLRenderer> creationListener;
 
-    public GLRenderer(OpenGLSurfaceView OpenGLSurfaceView) {
-        this.context = OpenGLSurfaceView;
-    }
-    int fbo;
+    public GLRenderer(OpenGLSurfaceView OpenGLSurfaceView) {this.context = OpenGLSurfaceView;}
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
@@ -87,6 +85,8 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         for (var v : Exec) v.accept(this);
         Exec.clear();
 
+        camera.update();
+
         for (var v : drawListeners) v.accept(this, delta);
 
         // Draw background color
@@ -105,18 +105,18 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         // Draw background
         background.render(mMVPMatrix);//TODO change this back to hud
         // Draw elements
-        for (Shape shape : elements) shape.render(mMVPMatrix);
+        for (Shape shape : elements) shape.render(Arrays.copyOf(mMVPMatrix,mMVPMatrix.length));
         // Draw Post-Processing effects
         if (postProcessing!=null) postProcessing.render(hudMatrix);
         // Draw Hud
-        for (Shape shape : topelements) shape.render(hudMatrix);
+        for (Shape shape : topelements) shape.render(Arrays.copyOf(hudMatrix,hudMatrix.length));
     }
 
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         camera.updateViewport(context);
-        camera.updateProjection();
+        camera.fixProjection();
     }
 
     public Point toViewport(int x, int y) {return camera.toViewport(x,y);}

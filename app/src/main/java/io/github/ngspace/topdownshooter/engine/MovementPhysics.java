@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.physics;
+package io.github.ngspace.topdownshooter.engine;
 
 public interface MovementPhysics {
     public float getVelocityX();

@@ -1,4 +1,6 @@
-package io.github.ngspace.topdownshooter.renderer.opengl.elements;
+package io.github.ngspace.topdownshooter.renderer.elements;
+
+import static android.opengl.GLES10.glTranslatef;
 
 import android.opengl.GLES32;
 import android.opengl.Matrix;
@@ -7,16 +9,17 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.Arrays;
 
-import io.github.ngspace.topdownshooter.renderer.opengl.Bounds;
-import io.github.ngspace.topdownshooter.renderer.opengl.renderer.GLRenderer;
-import io.github.ngspace.topdownshooter.renderer.opengl.renderer.Shaders;
-import io.github.ngspace.topdownshooter.renderer.opengl.renderer.TextureInfo;
+import io.github.ngspace.topdownshooter.utils.Bounds;
+import io.github.ngspace.topdownshooter.renderer.renderer.GLRenderer;
+import io.github.ngspace.topdownshooter.renderer.renderer.Shaders;
+import io.github.ngspace.topdownshooter.renderer.renderer.TextureInfo;
+import io.github.ngspace.topdownshooter.utils.Logcat;
 
 public class Texture extends Shape {
 
     private TextureInfo texture;
-    private float angle = 0;
 
     //Added for Textures
     private FloatBuffer mCubeTextureCoordinates;
@@ -29,7 +32,7 @@ public class Texture extends Shape {
     private FloatBuffer vertexBuffer;
     private final ShortBuffer drawListBuffer;
     int mMVPMatrixHandle;
-    int mColorHandle;
+    int mAlphaHandle;
     int mPositionHandle;
 
     // number of coordinates per vertex in this array
@@ -80,8 +83,15 @@ public class Texture extends Shape {
         float[] scratch = new float[16];
 
         Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, 1.0f);
+        
 
+//        Matrix.translateM(mRotationMatrix, 0, 0, y, 0f);
+//        Matrix.translateM(mRotationMatrix, 0, 960f-x, 540f-y, 0f);
         Matrix.multiplyMM(scratch, 0, mvpMatrix, 0, mRotationMatrix, 0);
+//        Matrix.translateM(scratch, 0, 960f-x, 540f-y, 0f);
+//        Matrix.translateM(scratch, 0, x, y, 0f);
+//        Matrix.translateM(scratch,0,x,y,0f);
+//        Matrix.multiplyMM();
 
         //Add program to OpenGL ES Environment
         GLES32.glUseProgram(shaderProgram);
@@ -95,11 +105,11 @@ public class Texture extends Shape {
         //Prepare the triangle coordinate data
         GLES32.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX, GLES32.GL_FLOAT, false, vertexStride, vertexBuffer);
 
-        //Get Handle to Fragment Shader's vColor member
-        mColorHandle = GLES32.glGetUniformLocation(shaderProgram, "vAlpha");
+        //Get Handle to Fragment Shader's vAlpha member
+        mAlphaHandle = GLES32.glGetUniformLocation(shaderProgram, "vAlpha");
 
-        //Set the Color for drawing the triangle
-        GLES32.glUniform1f(mColorHandle, alpha);
+        //Set the alpha for drawing the triangle
+        GLES32.glUniform1f(mAlphaHandle, alpha);
 
         //Set Texture Handles and bind Texture
         mTextureUniformHandle = GLES32.glGetAttribLocation(shaderProgram, "u_Texture");
@@ -132,7 +142,7 @@ public class Texture extends Shape {
         GLES32.glDisableVertexAttribArray(mPositionHandle);
     }
 
-    @Override  public Bounds getBounds() {return new Bounds(x, y, width, height);}
+    @Override public Bounds getBounds() {return new Bounds(x, y, width, height);}
 
     @Override public void setBounds(float x, float y, float width, float height) {
         this.x = x;
@@ -165,7 +175,6 @@ public class Texture extends Shape {
     public float getHeight() {return height;}
 
     public float getAlpha() {return alpha;}
-    public float getAngle() {return angle;}
 
     public TextureInfo getTexture() {return texture;}
     public int getShaderProgram() {return shaderProgram;}
@@ -175,6 +184,5 @@ public class Texture extends Shape {
     // Setters
     public void setTexture(TextureInfo texture) {this.texture = texture;}
     public void setAlpha(float alpha) {this.alpha = alpha;}
-    public void setAngle(float angle) {this.angle = angle;}
     public void setSpriteCoords(float[] spriteCoords) {this.spriteCoords = spriteCoords;}
 }

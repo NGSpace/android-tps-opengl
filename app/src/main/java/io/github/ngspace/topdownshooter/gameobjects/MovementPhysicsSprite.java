@@ -1,15 +1,13 @@
 package io.github.ngspace.topdownshooter.gameobjects;
 
-import io.github.ngspace.topdownshooter.physics.MovementPhysics;
-import io.github.ngspace.topdownshooter.renderer.opengl.renderer.TextureInfo;
+import io.github.ngspace.topdownshooter.engine.MovementPhysics;
+import io.github.ngspace.topdownshooter.renderer.renderer.TextureInfo;
 
 public class MovementPhysicsSprite extends Sprite implements MovementPhysics {
     private float velx;
     private float vely;
 
-    public MovementPhysicsSprite(TextureInfo texture, float x, float y, float width, float height) {
-        super(texture, x, y, width, height);
-    }
+    public MovementPhysicsSprite(TextureInfo texture, float x, float y, float width, float height) {super(texture, x, y, width, height);}
 
     @Override public float getVelocityX() {return velx;}
     @Override public float getVelocityY() {return vely;}

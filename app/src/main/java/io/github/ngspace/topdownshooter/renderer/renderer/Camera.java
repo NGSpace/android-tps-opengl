@@ -1,28 +1,32 @@
-package io.github.ngspace.topdownshooter.renderer.opengl.renderer;
+package io.github.ngspace.topdownshooter.renderer.renderer;
 
 import android.graphics.Point;
 import android.opengl.GLES32;
 import android.opengl.Matrix;
 
-import io.github.ngspace.topdownshooter.renderer.opengl.OpenGLActivity;
-import io.github.ngspace.topdownshooter.renderer.opengl.OpenGLSurfaceView;
+import io.github.ngspace.topdownshooter.gameobjects.MovementPhysicsSprite;
+import io.github.ngspace.topdownshooter.renderer.OpenGLActivity;
+import io.github.ngspace.topdownshooter.renderer.OpenGLSurfaceView;
+import io.github.ngspace.topdownshooter.renderer.elements.Shape;
+import io.github.ngspace.topdownshooter.utils.Logcat;
 
 public class Camera {
 
     private int viewportBuffer;
     private float[] projectionMatrix = new float[16];
     private float[] hudProjectionMatrix = new float[16];
-    private int x = 0;
-    private int y = 0;
+    private float x = 0;
+    private float y = 0;
+    private Shape center = null;
 
     public Camera() {setProjection(0,0);}
 
-    public void move(int x, int y) {
+    public void move(float x, float y) {
         this.x-=x;
         this.y-=y;
         setProjection(this.x,this.y);
     }
-    public void setProjection(int x, int y) {
+    public void setProjection(float x, float y) {
         this.x=x;
         this.y=y;
         Matrix.frustumM(projectionMatrix, 0, -960f-x, 960f-x, -540f+y, 540f+y, 3f, 7);
@@ -30,7 +34,10 @@ public class Camera {
     }
     public float[] getProjectionMatrix() {return projectionMatrix;}
     public float[] getHudProjectionMatrix() {return hudProjectionMatrix;}
-    public void updateProjection() {setProjection(x,y);}
+    public void fixProjection() {setProjection(x,y);}
+    public void update() {
+        if (center!=null) setProjection(960f-center.getX()-center.getWidth()/2,540f-center.getY()- center.getHeight()/2f);
+    }
 
     public Point toViewport(int x, int y) {
         return new Point((int) ((((x-viewportBuffer/2f)/(OpenGLActivity.realWidth-viewportBuffer))*2f)*960f-this.x),
@@ -50,6 +57,8 @@ public class Camera {
         GLES32.glViewport(viewportBuffer/2,0, (int) (1920*relation), (int) (1080*relation));
     }
 
-    public int getX() {return x;}
-    public int getY() {return y;}
+    public float getX() {return x;}
+    public float getY() {return y;}
+
+    public void centerOn(Shape center) {this.center = center;}
 }

@@ -23,7 +23,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             tools:ignore="DiscouragedApi" />
         <activity
-            android:name=".renderer.opengl.OpenGLActivity"
+            android:name=".renderer.OpenGLActivity"
             android:exported="false"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"

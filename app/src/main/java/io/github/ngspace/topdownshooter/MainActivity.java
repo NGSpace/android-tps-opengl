@@ -17,7 +17,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import io.github.ngspace.topdownshooter.renderer.opengl.OpenGLActivity;
+import io.github.ngspace.topdownshooter.renderer.OpenGLActivity;
+import io.github.ngspace.topdownshooter.renderer.renderer.Shaders;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Shaders.loadShaders(this);
+
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);// TODO Remove this when done debugging
         View decorView = getWindow().getDecorView();
@@ -58,6 +62,4 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.rotatinglogo).animate().setInterpolator(new LinearInterpolator()).setDuration(3500).rotation(410).start();
     }
-
-    public static void log(Object o) {Log.i("NGSPACEly",String.valueOf(o));}
 }

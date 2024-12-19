@@ -1,7 +1,7 @@
 package io.github.ngspace.topdownshooter.gameobjects;
 
-import io.github.ngspace.topdownshooter.renderer.GameScene;
-import io.github.ngspace.topdownshooter.renderer.opengl.renderer.TextureInfo;
+import io.github.ngspace.topdownshooter.engine.GameScene;
+import io.github.ngspace.topdownshooter.renderer.renderer.TextureInfo;
 
 public class HudSprite extends Sprite {
     public HudSprite(TextureInfo texture, float x, float y, float width, float height) {

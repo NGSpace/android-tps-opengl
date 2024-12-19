@@ -1,4 +1,4 @@
-package io.github.ngspace.topdownshooter.renderer.opengl.renderer;
+package io.github.ngspace.topdownshooter.renderer.renderer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,11 +13,12 @@ public class Textures {
 
     public static int length = 10;
 
-    public static TextureInfo SIMLEY;// = loadTexture(R.drawable.simley);
-    public static TextureInfo FEDORA;// = loadTexture(R.drawable.fedora);
-    public static TextureInfo STARSET;// = loadTexture(R.drawable.starset);
-    public static TextureInfo FUCKOPENGL;// = loadTexture(R.drawable.fuckopengl);
-    public static TextureInfo ANCHOR;// = loadTexture(R.drawable.anchor);
+    public static TextureInfo SIMLEY;
+    public static TextureInfo FEDORA;
+    public static TextureInfo STARSET;
+    public static TextureInfo FUCKOPENGL;
+    public static TextureInfo ANCHOR;
+    public static TextureInfo GRAYCIRCLE;
 
     static int[] textureHandle = null;
 
@@ -74,5 +75,6 @@ public class Textures {
         STARSET = loadTexture(applicationContext, R.drawable.starset);
         FUCKOPENGL = loadTexture(applicationContext, R.drawable.fuckopengl);
         ANCHOR = loadTexture(applicationContext, R.drawable.anchor);
+        GRAYCIRCLE = loadTexture(applicationContext, R.drawable.graycircle);
     }
 }
