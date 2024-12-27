@@ -21,6 +21,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import android.opengl.GLES32;
+import android.opengl.Matrix;
 
 import io.github.ngspace.topdownshooter.utils.Bounds;
 import io.github.ngspace.topdownshooter.renderer.renderer.GLRenderer;
@@ -29,7 +30,7 @@ import io.github.ngspace.topdownshooter.renderer.renderer.Shaders;
 /**
  * A two-dimensional square for use as a drawn object in OpenGL ES 3.0.
  */
-public class Square extends Shape {
+public class Square extends Element {
 
     private final FloatBuffer vertexBuffer;
     private final ShortBuffer drawListBuffer;
@@ -88,6 +89,20 @@ public class Square extends Shape {
      * this shape.
      */
     public void draw(float[] mvpMatrix) {
+
+        final float[] mRotationMatrix = new float[16];
+        float[] scratch = new float[16];
+
+        float pivotX = 0;//x + width/2;
+        float pivotY = 0;//y + height/2;
+        Matrix.setIdentityM(mRotationMatrix, 0);
+        Matrix.translateM(mRotationMatrix, 0, -pivotX, -pivotY, 0);
+        Matrix.rotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
+        Matrix.translateM(mRotationMatrix, 0, pivotX, pivotY, 0);
+
+        //Apply the rotation and mvpMatrix to scratch
+        Matrix.multiplyMM(scratch, 0, mvpMatrix, 0, mRotationMatrix, 0);
+
         // Add program to OpenGL environment
         GLES32.glUseProgram(mProgram);
 
@@ -114,7 +129,7 @@ public class Square extends Shape {
         GLRenderer.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
-        GLES32.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+        GLES32.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, scratch, 0);
         GLRenderer.checkGlError("glUniformMatrix4fv");
 
         // Draw the square

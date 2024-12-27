@@ -5,11 +5,10 @@ import android.view.MotionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.ngspace.topdownshooter.gameobjects.Sprite;
 import io.github.ngspace.topdownshooter.utils.Bounds;
 import io.github.ngspace.topdownshooter.renderer.TouchEventListener;
 
-public abstract class Shape {
+public abstract class Element {
 
     protected boolean pressed = false;
     protected boolean hidden = false;
@@ -60,4 +59,7 @@ public abstract class Shape {
 
     public float getAngle() {return angle;}
     public void setAngle(float angle) {this.angle = angle;}
+
+    public float getCenterX() {return getX()+getWidth ()/2;}
+    public float getCenterY() {return getY()+getHeight()/2;}
 }

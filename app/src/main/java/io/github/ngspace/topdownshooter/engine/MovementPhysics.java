@@ -8,4 +8,6 @@ public interface MovementPhysics {
 
     public void setVelocity(float x, float y);
     public void addVelocity(float x, float y);
+
+    boolean caresForOthers();
 }

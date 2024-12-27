@@ -1,7 +1,5 @@
 package io.github.ngspace.topdownshooter.renderer.elements;
 
-import static android.opengl.GLES10.glTranslatef;
-
 import android.opengl.GLES32;
 import android.opengl.Matrix;
 
@@ -9,15 +7,13 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.Arrays;
 
 import io.github.ngspace.topdownshooter.utils.Bounds;
 import io.github.ngspace.topdownshooter.renderer.renderer.GLRenderer;
 import io.github.ngspace.topdownshooter.renderer.renderer.Shaders;
 import io.github.ngspace.topdownshooter.renderer.renderer.TextureInfo;
-import io.github.ngspace.topdownshooter.utils.Logcat;
 
-public class Texture extends Shape {
+public class Texture extends Element {
 
     private TextureInfo texture;
 
@@ -82,16 +78,15 @@ public class Texture extends Shape {
         final float[] mRotationMatrix = new float[16];
         float[] scratch = new float[16];
 
-        Matrix.setRotateM(mRotationMatrix, 0, angle, 0, 0, 1.0f);
-        
+        float pivotX = x + width/2;
+        float pivotY = y + height/2;
+        Matrix.setIdentityM(mRotationMatrix, 0);
+        Matrix.translateM(mRotationMatrix, 0, -pivotX, -pivotY, 0);
+        Matrix.rotateM(mRotationMatrix, 0, angle, 0, 0, -1.0f);
+        Matrix.translateM(mRotationMatrix, 0, pivotX, pivotY, 0);
 
-//        Matrix.translateM(mRotationMatrix, 0, 0, y, 0f);
-//        Matrix.translateM(mRotationMatrix, 0, 960f-x, 540f-y, 0f);
+        //Apply the rotation and mvpMatrix to scratch
         Matrix.multiplyMM(scratch, 0, mvpMatrix, 0, mRotationMatrix, 0);
-//        Matrix.translateM(scratch, 0, 960f-x, 540f-y, 0f);
-//        Matrix.translateM(scratch, 0, x, y, 0f);
-//        Matrix.translateM(scratch,0,x,y,0f);
-//        Matrix.multiplyMM();
 
         //Add program to OpenGL ES Environment
         GLES32.glUseProgram(shaderProgram);
@@ -129,7 +124,7 @@ public class Texture extends Shape {
         GLES32.glVertexAttribPointer(mTextureCoordinateHandle, 2, GLES32.GL_FLOAT, false, 0, mCubeTextureCoordinates);
         GLES32.glEnableVertexAttribArray(mTextureCoordinateHandle);
 
-        //Get Handle to Shape's Transformation Matrix
+        //Get Handle to Element's Transformation Matrix
         mMVPMatrixHandle = GLES32.glGetUniformLocation(shaderProgram, "uMVPMatrix");
 
         //Apply the projection and view transformation
@@ -149,13 +144,11 @@ public class Texture extends Shape {
         this.y = y;
         this.width = width;
         this.height = height;
-        float realx = 960f - x;
-        float realy = 540f - y;
-        spriteCoords = new float[] {realx, realy-height,   // top left
-                realx-width, realy-height,   // bottom left
-                realx-width, realy,   // bottom right
-                realx, realy};   //top right
-        //Initialize Vertex Byte Buffer for Shape Coordinates / # of coordinate values * 4 bytes per float
+        spriteCoords = new float[] {-x, -y-height,   // top left
+                -x-width, -y-height,   // bottom left
+                -x-width, -y,   // bottom right
+                -x, -y};   //top right
+        //Initialize Vertex Byte Buffer for Element Coordinates / # of coordinate values * 4 bytes per float
         ByteBuffer bb = ByteBuffer.allocateDirect(spriteCoords.length * 4);
         //Use the Device's Native Byte Order
         bb.order(ByteOrder.nativeOrder());

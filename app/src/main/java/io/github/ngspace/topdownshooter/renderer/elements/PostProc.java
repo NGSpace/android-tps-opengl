@@ -13,7 +13,7 @@ import io.github.ngspace.topdownshooter.utils.Bounds;
 import io.github.ngspace.topdownshooter.renderer.renderer.GLRenderer;
 import io.github.ngspace.topdownshooter.renderer.renderer.Shaders;
 
-public class PostProc extends Shape {
+public class PostProc extends Element {
 
     private final FloatBuffer vertexBuffer;
     private final ShortBuffer drawListBuffer;

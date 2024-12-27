@@ -3,15 +3,17 @@ package io.github.ngspace.topdownshooter.renderer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.Surface;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.github.ngspace.topdownshooter.renderer.elements.Element;
 import io.github.ngspace.topdownshooter.renderer.renderer.GLRenderer;
-import io.github.ngspace.topdownshooter.renderer.elements.Shape;
 
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.
@@ -22,7 +24,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
     private final GLRenderer renderer;
 
-    List<Shape> liftedElements = new ArrayList<Shape>();
+    List<Element> liftedElements = new ArrayList<Element>();
 
     public OpenGLSurfaceView(Context context) {
         super(context);
@@ -34,7 +36,6 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
         // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -62,11 +63,11 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         return !liftedElements.isEmpty();
     }
 
-    private boolean processTouch(MotionEvent e, int x, int y, List<Shape> elements) {
-        final List<Shape> reversedelements = new ArrayList<>(elements);
+    private boolean processTouch(MotionEvent e, int x, int y, List<Element> elements) {
+        final List<Element> reversedelements = new ArrayList<>(elements);
         Collections.reverse(reversedelements);
-        for (Shape s : reversedelements) {
-            if (s.contains(x,y)) {
+        for (Element s : reversedelements) {
+            if (!s.isHidden()&&s.contains(x,y)) {
                 if (s.touchDown(e, x, y)) {
                     liftedElements.add(s);
                     return true;

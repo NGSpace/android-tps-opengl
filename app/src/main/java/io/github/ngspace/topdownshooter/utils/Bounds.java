@@ -27,8 +27,8 @@ public record Bounds(float x, float y, float width, float height) {
 
     public boolean contains(float otherx, float othery) {
         if (this.width<0||this.height<0) return false;
-        if (otherx<x || otherx>x+width) return false;
-        if (othery<y || othery>y+height) return false;
+        if (otherx<=x || otherx>=x+width) return false;
+        if (othery<=y || othery>=y+height) return false;
         return true;
     }
 

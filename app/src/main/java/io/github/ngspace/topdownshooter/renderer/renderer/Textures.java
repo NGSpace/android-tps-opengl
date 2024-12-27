@@ -19,6 +19,8 @@ public class Textures {
     public static TextureInfo FUCKOPENGL;
     public static TextureInfo ANCHOR;
     public static TextureInfo GRAYCIRCLE;
+    public static TextureInfo CIRCLE;
+    public static TextureInfo SHOOTING_OVERLAY;
 
     static int[] textureHandle = null;
 
@@ -76,5 +78,7 @@ public class Textures {
         FUCKOPENGL = loadTexture(applicationContext, R.drawable.fuckopengl);
         ANCHOR = loadTexture(applicationContext, R.drawable.anchor);
         GRAYCIRCLE = loadTexture(applicationContext, R.drawable.graycircle);
+        CIRCLE = loadTexture(applicationContext, R.drawable.oriented_circle);
+        SHOOTING_OVERLAY = loadTexture(applicationContext, R.drawable.shooting_overlay);
     }
 }

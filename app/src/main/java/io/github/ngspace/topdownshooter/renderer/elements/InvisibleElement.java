@@ -2,11 +2,11 @@ package io.github.ngspace.topdownshooter.renderer.elements;
 
 import io.github.ngspace.topdownshooter.utils.Bounds;
 
-public class InvisibleShape extends Shape {
+public class InvisibleElement extends Element {
 
     private Bounds bounds;
 
-    public InvisibleShape(Bounds bounds) {this.bounds = bounds;}
+    public InvisibleElement(Bounds bounds) {this.bounds = bounds;}
 
     @Override public void draw(float[] mvpMatrix) {}
 

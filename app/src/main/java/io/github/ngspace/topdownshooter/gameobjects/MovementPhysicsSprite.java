@@ -15,10 +15,12 @@ public class MovementPhysicsSprite extends Sprite implements MovementPhysics {
     @Override public void setVelocity(float x, float y) {this.velx = x; this.vely = y;}
 
     @Override public int getDrag() {return 1;}
+    @Override public boolean caresForOthers() {return true;}
 
     @Override public void addVelocity(float x, float y) {
         this.velx = clamp(velx+x,-1,1);
         this.vely = clamp(vely+y,-1,1);
     }
+
     float clamp(float value, float min, float max) {return Math.max(min, Math.min(max, value));}
 }
