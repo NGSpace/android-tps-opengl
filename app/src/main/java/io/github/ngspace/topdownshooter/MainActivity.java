@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(()-> {
-            Intent intent = new Intent(this, TestGameScene.class);
+            Intent intent = new Intent(this, GeneratedGameScene.class);
             startActivity(intent);
         }, 1);//TODO one day change this back to 3000
 

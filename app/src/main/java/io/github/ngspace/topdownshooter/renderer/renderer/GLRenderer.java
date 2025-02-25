@@ -71,7 +71,6 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLES32.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         Textures.loadTextures(context.getContext());
-        background = new Texture(Textures.STARSET,0,0,1920,1080);
         defaultDelta = 1/context.getDisplay().getRefreshRate();
 
         creationListener.accept(this);
@@ -108,10 +107,10 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         Matrix.multiplyMM(hudMatrix, 0, camera.getHudProjectionMatrix(), 0, mViewMatrix, 0);
 
         // Draw background
-        background.render(mMVPMatrix);//TODO change this back to hud
+        if (background!=null) background.render(hudMatrix);
         // Draw elements
         for (Element element : elements) element.render(Arrays.copyOf(mMVPMatrix,mMVPMatrix.length));
-        // Draw Post-Processing effects
+        // Draw Polengthst-Processing effects
         if (postProcessing!=null) postProcessing.render(hudMatrix);
         // Draw Hud
         for (Element element : topelements) element.render(Arrays.copyOf(hudMatrix,hudMatrix.length));
@@ -185,12 +184,10 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     public synchronized void removeHudElement(Element element) {topelements.remove(element);}
 
     public Element ElementAt(float x, float y) {
-        Logcat.log(x,y);
         final List<Element> reversedelements = new ArrayList<>(elements);
         Collections.reverse(reversedelements);
         for (Element s : reversedelements) {
             if (!s.isHidden()&&s.contains(x,y)) {
-                Logcat.log("Suc");
                 return s;
             }
         }
