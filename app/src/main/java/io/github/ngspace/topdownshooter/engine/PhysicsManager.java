@@ -1,12 +1,10 @@
 package io.github.ngspace.topdownshooter.engine;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import io.github.ngspace.topdownshooter.gameobjects.AGameObject;
 import io.github.ngspace.topdownshooter.utils.Bounds;
-import io.github.ngspace.topdownshooter.utils.Logcat;
 
 public class PhysicsManager {
     private List<AGameObject> colliders = new ArrayList<AGameObject>();
@@ -24,7 +22,7 @@ public class PhysicsManager {
     }
 
     /**
-     * NO DOCUMENTATION, FUCK YOU FUTURE ME, DEAL WITH THIS SHIT LATER.
+     * NO DOCUMENTATION, FUCK YOU FUTURE ME, DEAL WITH THIS SHIT YOURSELF.
      */
     public synchronized void update(float delta) {
         for (var object : movementObjects) {
@@ -51,17 +49,23 @@ public class PhysicsManager {
             if (physics.caresForOthers()) {
                 for (AGameObject collider : colliders) {
                     if (collider == object) continue;
+
                     Bounds colliderbounds = collider.getBounds();
                     boolean collided = false;
                     if (oldBounds.positioned(newx, oldBounds.y()).intersects(colliderbounds)) {
                         collided = true;
-                        newx = oldBounds.x() > colliderbounds.x() ? colliderbounds.x() + colliderbounds.width() : colliderbounds.x() - oldBounds.width();
+                        if (!collider.isTrigger())
+                            newx = oldBounds.x() > colliderbounds.x() ? colliderbounds.x() + colliderbounds.width() : colliderbounds.x() - oldBounds.width();
                     }
                     if (oldBounds.positioned(oldBounds.x(), newy).intersects(colliderbounds)) {
                         collided = true;
-                        newy = oldBounds.y() > colliderbounds.y() ? colliderbounds.y() + colliderbounds.height() : colliderbounds.y() - oldBounds.height();
+                        if (!collider.isTrigger())
+                            newy = oldBounds.y() > colliderbounds.y() ? colliderbounds.y() + colliderbounds.height() : colliderbounds.y() - oldBounds.height();
                     }
-                    if (collided) object.collidedWith(collider);
+                    if (collided) {
+                        object.collidedWith(collider);
+                        collider.collidedWith(object);
+                    }
                 }
             } else {
                 for (AGameObject collider : colliders)

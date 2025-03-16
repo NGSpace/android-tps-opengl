@@ -1,0 +1,12 @@
+{
+  "elements": [
+    {
+      "type": "sprite",
+      "collision": true,
+      "x": -50,
+      "y": -20,
+      "width": 50,
+      "height": 20
+    }
+  ]
+}
