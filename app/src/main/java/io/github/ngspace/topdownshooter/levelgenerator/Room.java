@@ -1,4 +1,6 @@
 package io.github.ngspace.topdownshooter.levelgenerator;
 
-public record Room(Element[] elements) {
+import android.graphics.Point;
+
+public record Room(Element[] elements, String parentRoomName, Point offset) {
 }

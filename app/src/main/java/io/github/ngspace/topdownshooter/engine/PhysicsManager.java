@@ -2,29 +2,48 @@ package io.github.ngspace.topdownshooter.engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import io.github.ngspace.topdownshooter.gameobjects.AGameObject;
 import io.github.ngspace.topdownshooter.utils.Bounds;
+import io.github.ngspace.topdownshooter.utils.Logcat;
 
 public class PhysicsManager {
     private List<AGameObject> colliders = new ArrayList<AGameObject>();
     private List<AGameObject> movementObjects = new ArrayList<AGameObject>();
+    private Stack<AGameObject> objectsToDestroy = new Stack<AGameObject>();
+    private Stack<AGameObject> objectsToAdd = new Stack<AGameObject>();
 
-    public synchronized void addObject(AGameObject object) {
-        if (object instanceof MovementPhysics physics) {
-            if (physics.caresForOthers()) colliders.add(object);
-            movementObjects.add(object);
-        } else colliders.add(object);
+    public synchronized void cleanupobjects(GameScene scene) {
+        while (!objectsToDestroy.empty()) {
+            AGameObject obj = objectsToDestroy.pop();
+            scene.deleteObject(obj);
+            colliders.remove(obj);
+            movementObjects.remove(obj);
+            obj.destroy(scene);
+        }
+        while (!objectsToAdd.empty()) {
+            AGameObject obj = objectsToAdd.pop();
+            if (obj instanceof MovementPhysics physics) {
+                if (physics.caresForOthers()) colliders.add(obj);
+                movementObjects.add(obj);
+            } else colliders.add(obj);
+        }
     }
-    public synchronized void removeObject(AGameObject object) {
-        colliders.remove(object);
-        movementObjects.remove(object);
+
+    public void addAddObject(AGameObject object) {
+        objectsToAdd.add(object);
+    }
+
+    public void addRemove(AGameObject object) {
+        objectsToDestroy.add(object);
     }
 
     /**
      * NO DOCUMENTATION, FUCK YOU FUTURE ME, DEAL WITH THIS SHIT YOURSELF.
      */
     public synchronized void update(float delta) {
+
         for (var object : movementObjects) {
             var physics = (MovementPhysics) object;
             Bounds oldBounds = object.getBounds();

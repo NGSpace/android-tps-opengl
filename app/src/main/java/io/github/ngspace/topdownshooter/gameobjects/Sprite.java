@@ -13,11 +13,15 @@ public class Sprite extends AGameObject {
         this.texture = new Texture(texture, x, y, width, height);
     }
 
+    public Sprite(TextureInfo texture, Bounds bounds) {
+        this(texture, bounds.x(),bounds.y(),bounds.width(),bounds.height());
+    }
+
 
     @Override public void init(GameScene scene) {super.init(scene);scene.getRenderer().addElement(texture);}
     @Override public void destroy(GameScene scene) {super.destroy(scene);scene.getRenderer().removeElement(texture);}
 
     @Override public void setBounds(Bounds bounds) {super.setBounds(bounds);texture.setBounds(bounds);}
     @Override public void setAngle(float angle) {super.setAngle(angle);texture.setAngle(angle);}
-    @Override public void setHidden(boolean hidden) {super.setHidden(hidden);texture.setHidden(hidden);}
+    @Override public void setVisible(boolean visible) {super.setVisible(visible);texture.setVisible(visible);}
 }

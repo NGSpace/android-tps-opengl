@@ -15,21 +15,15 @@ public abstract class GameScene extends OpenGLActivity {
 
     private PhysicsManager physicsManager = new PhysicsManager();
     private List<AGameObject> gameObjects = new ArrayList<AGameObject>();
-    private Stack<AGameObject> objectsToDestroy = new Stack<AGameObject>();
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         renderer.setCreationListener(r->start());
-        renderer.addDrawListener((r,d)->{physicsManager.update(d.floatValue());cleanupobjects();update(d);});
-    }
-
-    private void cleanupobjects() {
-        while (!objectsToDestroy.empty()) {
-            AGameObject obj = objectsToDestroy.pop();
-            gameObjects.remove(obj);
-            physicsManager.removeObject(obj);
-            obj.destroy(this);
-        }
+        renderer.addDrawListener((r,d)->{
+            physicsManager.cleanupobjects(this);
+            physicsManager.update(d.floatValue());
+            update(d);
+        });
     }
 
     public abstract void start();
@@ -42,13 +36,16 @@ public abstract class GameScene extends OpenGLActivity {
     }
     public void addPhysicsObject(AGameObject object) {
         addObject(object);
-        physicsManager.addObject(object);
+        physicsManager.addAddObject(object);
     }
 
     public void destroyObject(AGameObject object) {
-//        gameObjects.remove(object);
-//        physicsManager.removeObject(object);
-//        object.destroy(this);
-        objectsToDestroy.add(object);
+        physicsManager.addRemove(object);
+    }
+
+    public void deleteObject(AGameObject obj) {
+        getRenderer().removeTouchElement(obj);
+        obj.destroy(this);
+        gameObjects.remove(obj);
     }
 }

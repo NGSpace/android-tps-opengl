@@ -11,13 +11,13 @@ import io.github.ngspace.topdownshooter.renderer.TouchEventListener;
 public abstract class Element {
 
     protected boolean pressed = false;
-    protected boolean hidden = false;
+    protected boolean visible = true;
     protected List<TouchEventListener> downListeners = new ArrayList<TouchEventListener>();
     protected List<TouchEventListener> dragListeners = new ArrayList<TouchEventListener>();
     protected List<TouchEventListener> upListeners = new ArrayList<TouchEventListener>();
     protected float angle = 0;
 
-    public void render(float[] mvpMatrix) {if (!isHidden()) draw(mvpMatrix);}
+    public void render(float[] mvpMatrix) {if (isVisible()) draw(mvpMatrix);}
     public abstract void draw(float[] mvpMatrix);
 
     public boolean touchDown(MotionEvent e, int x, int y) {
@@ -39,9 +39,9 @@ public abstract class Element {
     public void addTouchUpListener(TouchEventListener listener) {upListeners.add(listener);}
 
     public boolean isPressed() {return pressed;}
-    public boolean isHidden() {return hidden;}
+    public boolean isVisible() {return visible;}
 
-    public void setHidden(boolean hidden) {this.hidden = hidden;}
+    public void setVisible(boolean visible) {this.visible = visible;}
 
     public abstract Bounds getBounds();
     public abstract void setBounds(float x, float y, float width, float height);

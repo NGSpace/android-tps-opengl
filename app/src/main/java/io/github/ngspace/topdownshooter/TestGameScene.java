@@ -86,10 +86,10 @@ public class TestGameScene extends GameScene {
 
         //Aiming
         if (shootyStickAngle!=-1) {
-            shooting.setHidden(false);
+            shooting.setVisible(true);
             shooting.setAngle(shootyStickAngle);
             shooting.setLocation(player.getX()-shooting.getWidth()/2+player.getWidth()/2,player.getY()-shooting.getHeight()/2+player.getHeight()/2);
-        } else shooting.setHidden(true);
+        } else shooting.setVisible(false);
 
         //Shooting
         if (shootyStickAngle==-1&&rotationAngle!=-1) {

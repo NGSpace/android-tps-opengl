@@ -1,0 +1,39 @@
+{
+  "elements": [
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+    {
+      "type": "sprite",
+      "x": 180,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+    {
+      "type": "door",
+      "custom": {
+        "playerTriggered": false,
+        "genRoomType": "3WaySplit",
+        "genOffsetX": -20,
+        "genOffsetY": 0
+      },
+      "visible": false,
+      "x": 20,
+      "y": -500,
+      "width": 160,
+      "height": 20
+    }
+  ]
+}

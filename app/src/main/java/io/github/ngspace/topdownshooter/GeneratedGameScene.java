@@ -9,10 +9,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.github.ngspace.topdownshooter.engine.GameScene;
 import io.github.ngspace.topdownshooter.gameobjects.Bullet;
 import io.github.ngspace.topdownshooter.gameobjects.Entity;
+import io.github.ngspace.topdownshooter.gameobjects.HudSprite;
 import io.github.ngspace.topdownshooter.gameobjects.JoyStick;
 import io.github.ngspace.topdownshooter.gameobjects.PathFindingEntity;
 import io.github.ngspace.topdownshooter.gameobjects.Sprite;
 import io.github.ngspace.topdownshooter.gameobjects.TriggerGameObject;
+import io.github.ngspace.topdownshooter.levelgenerator.LevelGenerator;
 import io.github.ngspace.topdownshooter.levelgenerator.LevelReader;
 import io.github.ngspace.topdownshooter.renderer.elements.Element;
 import io.github.ngspace.topdownshooter.renderer.renderer.Textures;
@@ -28,44 +30,27 @@ public class GeneratedGameScene extends GameScene {
     public static final int SPEED = 400;
     public static final int GRID_RES = 20;
     public static final int GRID_PIXEL = 100;
+    public static final int playerSize = 100;
     float rotationAngle = -1;
     ArrayList<Bullet> bullets = new ArrayList<>();
     ArrayList<PathFindingEntity> enemies = new ArrayList<>();
     int[][] grid;
 
+    LevelGenerator lvlGen;
+
     @Override public void start() {
         addObject(movementStick = new JoyStick(SPACE_FROM_CORNER,1080-200-SPACE_FROM_CORNER));
         addObject(secondaryStick = new JoyStick(1920-SPACE_FROM_CORNER-50-200,1080-200-SPACE_FROM_CORNER));
         addObject(shooting = new Sprite(Textures.SHOOTING_OVERLAY,910,490,330,2500));
-        addPhysicsObject(player = new Entity(Textures.FUCKOPENGL,-50,-50,100,100));
-        generateBasicRoom(0,0);
+        addPhysicsObject(player = new Entity(Textures.FUCKOPENGL,200,-100,playerSize,playerSize));
+        addObject(new HudSprite(Textures.STARSET, (1920-playerSize)/2f, (1080-playerSize)/2f, playerSize, playerSize));
+        player.setVisible(false);
         renderer.camera.centerOn(player);
-    }
-    int ij = 0;
 
-    private void generateBasicRoom(int x, int y) {
-        int d = 500;
-        // Bottom wall
-        addPhysicsObject(new Sprite(Textures.STARSET, x-d, y+d, d-100, 10));
-        addPhysicsObject(new Sprite(Textures.STARSET, x+100, y+d, d-100, 10));
-        // Leftside wall
-        addPhysicsObject(new Sprite(Textures.STARSET, x-d, y-d, 10, d*2));
-        // Rightside wall
-        addPhysicsObject(new Sprite(Textures.STARSET, x+d, y-d, 10, d*2));
-        // Top wall
-        addPhysicsObject(new Sprite(Textures.STARSET, x-d, y-d, d-100, 10));
-        addPhysicsObject(new Sprite(Textures.STARSET, x+100, y-d, d-100, 10));
-
-        // Door
-        AtomicBoolean b = new AtomicBoolean();
-        addPhysicsObject(new TriggerGameObject(Textures.FUCKOPENGL, x-100, y-d, 200, 10, c->{
-            if (b.get()) return;
-            b.set(true);
-            generateBasicRoom(x, y-d*2);
-        }));
         try {
-            new LevelReader(this);
-        } catch (IOException | JSONException e) {
+            lvlGen = new LevelGenerator(this);
+            lvlGen.generateRoom(this, "Start", 0, 0);
+        } catch (JSONException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -77,10 +62,10 @@ public class GeneratedGameScene extends GameScene {
 
         //Aiming
         if (shootyStickAngle!=-1) {
-            shooting.setHidden(false);
+            shooting.setVisible(true);
             shooting.setAngle(shootyStickAngle);
             shooting.setLocation(player.getX()-shooting.getWidth()/2+player.getWidth()/2,player.getY()-shooting.getHeight()/2+player.getHeight()/2);
-        } else shooting.setHidden(true);
+        } else shooting.setVisible(false);
 
         //Shooting
         if (shootyStickAngle==-1&&rotationAngle!=-1) {

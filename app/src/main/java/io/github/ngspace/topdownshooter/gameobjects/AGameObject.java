@@ -6,18 +6,13 @@ import io.github.ngspace.topdownshooter.utils.Bounds;
 
 public abstract class AGameObject extends InvisibleElement {
     protected GameScene scene;
-    protected boolean collidable = false;
+    protected boolean trigger = false;
     public AGameObject(Bounds bounds) {super(bounds);}
 
     public void init(GameScene scene) {this.scene=scene;scene.getRenderer().addTouchElement(this);}
-    public void destroy(GameScene scene) {scene.getRenderer().removeTouchElement(this);}
+    public void destroy(GameScene scene) {}
     public void collidedWith(AGameObject collider) {/* Rarely used, keeping optional. */}
 
-    public boolean isTrigger() {
-        return collidable;
-    }
-
-    public void setCollidable(boolean collidable) {
-        this.collidable = collidable;
-    }
+    public boolean isTrigger() {return trigger;}
+    public void setTrigger(boolean trigger) {this.trigger = trigger;}
 }

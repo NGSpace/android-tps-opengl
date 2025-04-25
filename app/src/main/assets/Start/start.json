@@ -1,0 +1,52 @@
+{
+  "elements": [
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": 0,
+      "width": 500,
+      "height": 20
+    },
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 170,
+      "height": 20
+    },
+    {
+      "type": "sprite",
+      "x": 330,
+      "y": -500,
+      "width": 170,
+      "height": 20
+    },
+    {
+      "type": "door",
+      "custom": {
+        "playerTriggered": true,
+        "genRoomType": "Hallway",
+        "genOffsetX": -20,
+        "genOffsetY": 0
+      },
+      "x": 170,
+      "y": -500,
+      "width": 160,
+      "height": 20
+    }
+  ]
+}

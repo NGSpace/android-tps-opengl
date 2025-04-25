@@ -1,0 +1,19 @@
+{
+  "offsetX": -150,
+  "parent": "templates/3doors.jsonc",
+  "elements": [
+    {
+      "type": "door",
+      "custom": {
+        "playerTriggered": true,
+        "genRoomType": "Hallway",
+        "genOffsetX": -20,
+        "genOffsetY": 0
+      },
+      "x": 170,
+      "y": -500,
+      "width": 160,
+      "height": 20
+    }
+  ]
+}

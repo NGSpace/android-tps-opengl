@@ -3,10 +3,8 @@ package io.github.ngspace.topdownshooter.renderer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.Surface;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +65,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
         final List<Element> reversedelements = new ArrayList<>(elements);
         Collections.reverse(reversedelements);
         for (Element s : reversedelements) {
-            if (!s.isHidden()&&s.contains(x,y)) {
+            if (s.isVisible() &&s.contains(x,y)) {
                 if (s.touchDown(e, x, y)) {
                     liftedElements.add(s);
                     return true;

@@ -35,8 +35,6 @@ import java.util.function.Consumer;
 import io.github.ngspace.topdownshooter.renderer.OpenGLSurfaceView;
 import io.github.ngspace.topdownshooter.renderer.elements.Element;
 import io.github.ngspace.topdownshooter.renderer.elements.PostProc;
-import io.github.ngspace.topdownshooter.renderer.elements.Texture;
-import io.github.ngspace.topdownshooter.utils.Logcat;
 
 /**
  * Provides drawing instructions for a GLSurfaceView object. This class
@@ -187,7 +185,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         final List<Element> reversedelements = new ArrayList<>(elements);
         Collections.reverse(reversedelements);
         for (Element s : reversedelements) {
-            if (!s.isHidden()&&s.contains(x,y)) {
+            if (s.isVisible() &&s.contains(x,y)) {
                 return s;
             }
         }

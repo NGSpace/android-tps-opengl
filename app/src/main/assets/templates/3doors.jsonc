@@ -1,0 +1,73 @@
+{
+  "offsetX": -150,
+  "elements": [
+
+    /// North
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 170,
+      "height": 20
+    },
+    {
+      "type": "sprite",
+      "x": 330,
+      "y": -500,
+      "width": 170,
+      "height": 20
+    },
+
+    /// South
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": 0,
+      "width": 170,
+      "height": 20
+    },
+    {
+      "type": "sprite",
+      "x": 330,
+      "y": 0,
+      "width": 170,
+      "height": 20
+    },
+
+    /// West
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 20,
+      "height": 170
+    },
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -160,
+      "width": 20,
+      "height": 170
+    },
+
+    /// East
+
+    {
+      "type": "sprite",
+      "x": 480,
+      "y": -500,
+      "width": 20,
+      "height": 170
+    },
+    {
+      "type": "sprite",
+      "x": 480,
+      "y": -160,
+      "width": 20,
+      "height": 170
+    }
+  ]
+}
