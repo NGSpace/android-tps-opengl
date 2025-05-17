@@ -38,7 +38,7 @@
     {
       "type": "door",
       "custom": {
-        "playerTriggered": true,
+        "canBeExitDoor": true,
         "genRoomType": "Hallway",
         "genOffsetX": -20,
         "genOffsetY": 0

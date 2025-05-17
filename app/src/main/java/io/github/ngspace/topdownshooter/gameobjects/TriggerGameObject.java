@@ -5,13 +5,20 @@ import java.util.function.BiFunction;
 
 import io.github.ngspace.topdownshooter.renderer.renderer.TextureInfo;
 import io.github.ngspace.topdownshooter.renderer.renderer.Textures;
+import io.github.ngspace.topdownshooter.utils.Bounds;
 
 public class TriggerGameObject extends Sprite {
     private Consumer<AGameObject> triggerr;
-    private BiFunction<AGameObject, TriggerGameObject, Boolean> selfDestroyCondition = (o,t)->false;
+    private BiFunction<AGameObject, TriggerGameObject, Boolean> selfDestroyTrigger = (o, t)->false;
 
     public TriggerGameObject(TextureInfo texture, float x, float y, float width, float height, Consumer<AGameObject> trigger) {
         super(texture, x, y, width, height);
+        this.triggerr = trigger;
+        this.trigger = true;
+    }
+
+    public TriggerGameObject(TextureInfo texture, Bounds bounds, Consumer<AGameObject> trigger) {
+        super(texture, bounds);
         this.triggerr = trigger;
         this.trigger = true;
     }
@@ -24,11 +31,11 @@ public class TriggerGameObject extends Sprite {
     @Override
     public void collidedWith(AGameObject collider) {
         triggerr.accept(collider);
-        if (selfDestroyCondition.apply(collider, this))
+        if (selfDestroyTrigger.apply(collider, this))
             scene.destroyObject(this);
     }
 
-    public void setSelfDestroyCondition(BiFunction<AGameObject, TriggerGameObject, Boolean> selfDestroyCondition) {
-        this.selfDestroyCondition = selfDestroyCondition;
+    public void setSelfDestroyTrigger(BiFunction<AGameObject, TriggerGameObject, Boolean> selfDestroyCondition) {
+        this.selfDestroyTrigger = selfDestroyCondition;
     }
 }

@@ -1,7 +1,6 @@
 package io.github.ngspace.topdownshooter.levelgenerator;
 
 import android.graphics.Point;
-import android.graphics.PointF;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,14 +16,13 @@ import java.util.stream.Collectors;
 
 import io.github.ngspace.topdownshooter.engine.GameScene;
 import io.github.ngspace.topdownshooter.utils.Bounds;
-import io.github.ngspace.topdownshooter.utils.Logcat;
 
 public class LevelReader {
     Map<String, Room[]> room_types = new HashMap<>();
     Map<String, Room> room_names = new HashMap<>();
 
     public LevelReader(GameScene scene) throws IOException, JSONException {
-        JSONObject types = new JSONObject(readResource(scene, "room_types.json"));
+        JSONObject types = new JSONObject(readResource(scene, "room_types.jsonc"));
         for (Iterator<String> it = types.keys(); it.hasNext(); ) {
             String key = it.next();
             JSONArray jsonArray = types.getJSONArray(key);
@@ -78,7 +76,6 @@ public class LevelReader {
     public Room[] getRoomsOfType(String type) {return getRoomTypesMap().get(type);}
 
     public Room getRoomOfName(String s) {
-        Logcat.log(s, room_names.toString());
         return room_names.get(s);
     }
 }

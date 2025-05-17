@@ -1,0 +1,25 @@
+{
+  "elements": [
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+    {
+      "type": "sprite",
+      "x": 180,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    }
+  ]
+}

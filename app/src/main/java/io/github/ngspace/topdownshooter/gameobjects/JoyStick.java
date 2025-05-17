@@ -35,7 +35,9 @@ public class JoyStick extends HudSprite {
         finalx = clamp(finalx,centerx-MAX_DISTANCE,centerx+MAX_DISTANCE);
         finaly = clamp(finaly,centery-MAX_DISTANCE,centery+MAX_DISTANCE);
         xvel = (finalx-(centerx-MAX_DISTANCE))/MAX_DISTANCE - 1f;
+        if (Math.abs(xvel)<.08) xvel = 0;
         yvel = (finaly-(centery-MAX_DISTANCE))/MAX_DISTANCE - 1f;
+        if (Math.abs(yvel)<.08) yvel = 0;
         setBounds(finalx, finaly, initPos.width(), initPos.height());
     }
     float clamp(float value, float min, float max) {

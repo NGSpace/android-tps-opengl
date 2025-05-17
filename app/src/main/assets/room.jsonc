@@ -3,9 +3,16 @@
   "parent": "templates/3doors.jsonc",
   "elements": [
     {
+      "type": "key",
+      "x": 50,
+      "y": 50,
+      "width": 50,
+      "height": 50
+    },
+    {
       "type": "door",
       "custom": {
-        "playerTriggered": true,
+        "canBeExitDoor": true,
         "genRoomType": "Hallway",
         "genOffsetX": -20,
         "genOffsetY": 0

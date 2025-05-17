@@ -1,12 +1,14 @@
 {
   "Templates": [
-    "templates/3doors.jsonc"
+    "templates/3doors.jsonc",
+    "templates/hallway.json"
   ],
   "Start": [
     "Start/start.json"
   ],
   "Hallway": [
-    "hallway.json"
+//    "hallway.json",
+    "Start/StartHallway.jsonc"
   ],
   "3WaySplit": [
     "room.jsonc"

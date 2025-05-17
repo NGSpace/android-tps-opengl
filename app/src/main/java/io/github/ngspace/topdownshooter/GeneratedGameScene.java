@@ -4,6 +4,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.github.ngspace.topdownshooter.engine.GameScene;
@@ -24,7 +25,7 @@ public class GeneratedGameScene extends GameScene {
 
     JoyStick movementStick;
     JoyStick secondaryStick;
-    Entity player;
+    public Entity player;
     Sprite shooting;
     public static final int SPACE_FROM_CORNER = 150;
     public static final int SPEED = 400;
@@ -35,6 +36,8 @@ public class GeneratedGameScene extends GameScene {
     ArrayList<Bullet> bullets = new ArrayList<>();
     ArrayList<PathFindingEntity> enemies = new ArrayList<>();
     int[][] grid;
+
+    public List<Integer> keys = new ArrayList<>();
 
     LevelGenerator lvlGen;
 
@@ -49,7 +52,7 @@ public class GeneratedGameScene extends GameScene {
 
         try {
             lvlGen = new LevelGenerator(this);
-            lvlGen.generateRoom(this, "Start", 0, 0);
+            lvlGen.generateLevel(this, "Start", 0, 0);
         } catch (JSONException | IOException e) {
             throw new RuntimeException(e);
         }
