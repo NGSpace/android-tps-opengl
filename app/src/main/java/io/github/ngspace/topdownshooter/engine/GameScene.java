@@ -22,8 +22,13 @@ public abstract class GameScene extends OpenGLActivity {
         renderer.setCreationListener(r->start());
         renderer.addDrawListener((r,d)->{
             physicsManager.cleanupobjects(this);
-            physicsManager.update(d.floatValue());
-            update(d);
+            try {
+                physicsManager.update(d.floatValue());
+                update(d);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         });
     }
 

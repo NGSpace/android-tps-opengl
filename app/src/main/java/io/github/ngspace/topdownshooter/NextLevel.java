@@ -46,6 +46,7 @@ public class NextLevel extends AppCompatActivity {
         boolean success = getIntent().getBooleanExtra("Success",false);
 
         if (success) {
+            usr.run++;
             ((TextView) findViewById(R.id.NextLevelText)).setText("Survived!");
             FirebaseDatabase.getInstance().getReference(usr.firebaseUid).setValue(usr).addOnCompleteListener(r -> {
                 ((Button) findViewById(R.id.button2)).setText("Next");

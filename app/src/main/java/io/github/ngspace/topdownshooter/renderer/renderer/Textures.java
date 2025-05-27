@@ -11,7 +11,7 @@ import io.github.ngspace.topdownshooter.R;
 
 public class Textures {
 
-    public static int length = 20;
+    public static int length = 11;
 
     public static TextureInfo PLAYER;
     public static TextureInfo FUEL;

@@ -98,6 +98,7 @@ public class GeneratedGameScene extends GameScene {
                 notGenerated = false;
                 hudcover.setVisible(false);
             } catch (FailedToGenLevelException ignored) {
+                ignored.printStackTrace();
             }
         }
         if (movementStick.xvel!=0||movementStick.yvel!=0)
@@ -150,7 +151,6 @@ public class GeneratedGameScene extends GameScene {
     public void nextLevel(boolean b) {
         Intent intent = new Intent(this, NextLevel.class);
         user.health = player.health;
-        if (b) user.run++;
         intent.putExtra("UserData", user);
         intent.putExtra("Success", b);
         startActivity(intent);

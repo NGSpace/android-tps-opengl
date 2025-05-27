@@ -34,6 +34,8 @@ import java.util.function.Consumer;
 
 import io.github.ngspace.topdownshooter.renderer.OpenGLSurfaceView;
 import io.github.ngspace.topdownshooter.renderer.elements.Element;
+import io.github.ngspace.topdownshooter.renderer.elements.Text;
+import io.github.ngspace.topdownshooter.utils.Logcat;
 
 /**
  * Provides drawing instructions for a GLSurfaceView object. This class
@@ -113,7 +115,11 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
                 element.render(Arrays.copyOf(mMVPMatrix,mMVPMatrix.length));
         }
         // Draw Hud
-        for (Element element : topelements) element.render(Arrays.copyOf(hudMatrix,hudMatrix.length));
+        for (Element element : topelements) {
+//            if (element instanceof Text text)
+//                Logcat.log(text, text.getText(), text.isVisible(), text.getBounds(), hudMatrix);
+            element.render(Arrays.copyOf(hudMatrix,hudMatrix.length));
+        }
     }
 
 
