@@ -21,6 +21,7 @@ import javax.microedition.khronos.opengles.GL10;
 import android.graphics.Point;
 import android.opengl.GLES32;
 import android.opengl.Matrix;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.time.Duration;
@@ -59,7 +60,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     public Camera camera = new Camera();
     public Element background;
 
-    private Instant lastFrame = Instant.now();
+    private long mLastRender;
     private double defaultDelta;
     private Consumer<GLRenderer> creationListener;
     static boolean InitalStart = true;
@@ -74,6 +75,8 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
 
         defaultDelta = 1/context.getDisplay().getRefreshRate();
         creationListener.accept(this);
+        // initialize your last-frame timestamp
+        lastTimeNano = System.nanoTime();
     }
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
@@ -81,11 +84,21 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     private final float[] mViewMatrix = new float[16];
     private final float[] hudMatrix = {-3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.5f, 1.0f, 0.0f, 0.0f, -3.0f, 3.0f};
 
+    // in nanoseconds
+    private long lastTimeNano;
     @Override public void onDrawFrame(GL10 unused) {
-        Instant now = Instant.now();
-        double delta = Duration.between(lastFrame, now).toNanos()/1000000000d;
+        // current time in nanoseconds
+        long nowNano = System.nanoTime();
+
+        // delta time in seconds (float)
+        double delta = (nowNano - lastTimeNano) / 1_000_000_000d;
+
+        // update lastTime for the next frame
+        lastTimeNano = nowNano;
+
         if (delta==0) delta = defaultDelta;
-        lastFrame = now;
+
+        Logcat.log(delta);
         for (var v : Exec) v.accept(this);
         Exec.clear();
 
@@ -116,8 +129,6 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         }
         // Draw Hud
         for (Element element : topelements) {
-//            if (element instanceof Text text)
-//                Logcat.log(text, text.getText(), text.isVisible(), text.getBounds(), hudMatrix);
             element.render(Arrays.copyOf(hudMatrix,hudMatrix.length));
         }
     }
@@ -169,7 +180,7 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     */
     public static void checkGlError(String glOperation) {
         int error;
-        if ((error = GLES32.glGetError()) != GLES32.GL_NO_ERROR) {
+        while ((error = GLES32.glGetError()) != GLES32.GL_NO_ERROR) {
             Log.e("NGSPACEly", glOperation + ": glError " + error);
             throw new RuntimeException(glOperation + ": glError " + error);
         }

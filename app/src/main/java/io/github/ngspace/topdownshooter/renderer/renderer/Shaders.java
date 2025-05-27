@@ -10,12 +10,11 @@ import io.github.ngspace.topdownshooter.R;
 
 public class Shaders {
 
-    public static String TEXTURE_2D_VERT_SHADER;
-    public static String TEXTURE_2D_FRAG_SHADER;
-    public static String SQUARE_VERT_SHADER;
-    public static String SQUARE_FRAG_SHADER;
-    public static String POSTPROC_2D_VERT_SHADER;
-    public static String POSTPROC_2D_FRAG_SHADER;
+    public static Shaders shaders;
+
+
+    public final String TEXTURE_2D_VERT_SHADER;
+    public final String TEXTURE_2D_FRAG_SHADER;
 
     public static String readShader(Context context, int id) {
         try (InputStream is = context.getResources().openRawResource(id)) {
@@ -27,12 +26,8 @@ public class Shaders {
             throw new RuntimeException(e);
         }
     }
-    public static void loadShaders(Context context) {
+    public Shaders(Context context) {
         TEXTURE_2D_VERT_SHADER = readShader(context, R.raw.texture_2d_vert);
         TEXTURE_2D_FRAG_SHADER = readShader(context, R.raw.texture_2d_frag);
-        SQUARE_VERT_SHADER = readShader(context, R.raw.square_vert);
-        SQUARE_FRAG_SHADER = readShader(context, R.raw.square_frag);
-        POSTPROC_2D_VERT_SHADER = readShader(context, R.raw.postproc_vert);
-        POSTPROC_2D_FRAG_SHADER = readShader(context, R.raw.postproc_frag);
     }
 }

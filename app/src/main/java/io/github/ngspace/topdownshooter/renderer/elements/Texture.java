@@ -24,27 +24,24 @@ public class Texture extends Element {
     protected int mTextureUniformHandle;
     protected int mTextureCoordinateHandle;
 
-    protected float alpha = 1f;
-
-    protected final int shaderProgram;
+    protected static int shaderProgram = -1;
     protected FloatBuffer vertexBuffer;
     protected final ShortBuffer drawListBuffer;
     int mMVPMatrixHandle;
-    int mAlphaHandle;
     int mPositionHandle;
 
     // number of coordinates per vertex in this array
     final int COORDS_PER_VERTEX = 2;
     protected float[] spriteCoords = { -0.5f,  0.5f,   // top left
-            -0.5f, -0.5f,   // bottom left
-            0.5f, -0.5f,   // bottom right
-            0.5f,  0.5f }; //top right
+        -0.5f, -0.5f,   // bottom left
+        0.5f, -0.5f,   // bottom right
+        0.5f,  0.5f }; //top right
 
     protected float[] textureCoordinate = new float[] {
-            0f, 1f,
-            1f, 1f,
-            1f, 0f,
-            0f, 0f,
+        0f, 1f,
+        1f, 1f,
+        1f, 0f,
+        0f, 0f,
     };
 
     protected final short[] drawOrder = { 0, 1, 2, 0, 2, 3 }; //Order to draw vertices
@@ -55,6 +52,9 @@ public class Texture extends Element {
     protected float width;
     protected float height;
     boolean ispressed = false;
+
+    int vertexShader = -1;
+    int fragmentShader;
 
     public Texture(TextureInfo texture, float x, float y, float width, float height) {
         this.texture = texture;
@@ -67,12 +67,19 @@ public class Texture extends Element {
         drawListBuffer.put(drawOrder);
         drawListBuffer.position(0);
 
-        int vertexShader = GLRenderer.loadShader(GLES32.GL_VERTEX_SHADER, Shaders.TEXTURE_2D_VERT_SHADER);
-        int fragmentShader = GLRenderer.loadShader(GLES32.GL_FRAGMENT_SHADER, Shaders.TEXTURE_2D_FRAG_SHADER);
+        GLRenderer.checkGlError("do shit");
 
-        shaderProgram = GLES32.glCreateProgram();
-        GLES32.glAttachShader(shaderProgram, vertexShader);
-        GLES32.glAttachShader(shaderProgram, fragmentShader);
+        if (shaderProgram == -1) {
+            vertexShader = GLRenderer.loadShader(GLES32.GL_VERTEX_SHADER, Shaders.shaders.TEXTURE_2D_VERT_SHADER);
+            fragmentShader = GLRenderer.loadShader(GLES32.GL_FRAGMENT_SHADER, Shaders.shaders.TEXTURE_2D_FRAG_SHADER);
+
+            GLRenderer.checkGlError("Load shader");
+
+            shaderProgram = GLES32.glCreateProgram();
+            GLES32.glAttachShader(shaderProgram, vertexShader);
+            GLES32.glAttachShader(shaderProgram, fragmentShader);
+            GLRenderer.checkGlError("Compile shader");
+        }
 
         //Texture Code
         GLES32.glBindAttribLocation(shaderProgram, 0, "a_TexCoordinate");
@@ -108,12 +115,6 @@ public class Texture extends Element {
 
         //Prepare the triangle coordinate data
         GLES32.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX, GLES32.GL_FLOAT, false, vertexStride, vertexBuffer);
-
-        //Get Handle to Fragment Shader's vAlpha member
-        mAlphaHandle = GLES32.glGetUniformLocation(shaderProgram, "vAlpha");
-
-        //Set the alpha for drawing the triangle
-        GLES32.glUniform1f(mAlphaHandle, alpha);
 
         //Set Texture Handles and bind Texture
         mTextureUniformHandle = GLES32.glGetAttribLocation(shaderProgram, "u_Texture");
@@ -176,8 +177,6 @@ public class Texture extends Element {
     public float getWidth() {return width;}
     public float getHeight() {return height;}
 
-    public float getAlpha() {return alpha;}
-
     public TextureInfo getTexture() {return texture;}
     public int getShaderProgram() {return shaderProgram;}
     public boolean isPressed() {return ispressed;}
@@ -185,6 +184,5 @@ public class Texture extends Element {
 
     // Setters
     public void setTexture(TextureInfo texture) {this.texture = texture;}
-    public void setAlpha(float alpha) {this.alpha = alpha;}
     public void setSpriteCoords(float[] spriteCoords) {this.spriteCoords = spriteCoords;}
 }

@@ -20,15 +20,15 @@ public abstract class Element {
     public void render(float[] mvpMatrix) {if (isVisible()) draw(mvpMatrix);}
     public abstract void draw(float[] mvpMatrix);
 
-    public boolean touchDown(MotionEvent e, int x, int y) {
+    public boolean touchDown(int x, int y) {
         pressed = true;
         for (TouchEventListener listener : downListeners) listener.exec(this,x,y);
         return true;
     }
-    public void touchDrag(MotionEvent e, int x, int y) {
+    public void touchDrag(int x, int y) {
         for (TouchEventListener listener : dragListeners) listener.exec(this,x,y);
     }
-    public void touchUp(MotionEvent e, int x, int y) {
+    public void touchUp(int x, int y) {
         pressed = false;
         for (TouchEventListener listener : upListeners) listener.exec(this,x,y);
     }

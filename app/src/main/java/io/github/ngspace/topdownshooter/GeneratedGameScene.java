@@ -102,7 +102,7 @@ public class GeneratedGameScene extends GameScene {
             }
         }
         if (movementStick.xvel!=0||movementStick.yvel!=0)
-            player.setVelocity(movementStick.xvel*SPEED, movementStick.yvel*SPEED);
+            player.setVelocity((float) (movementStick.xvel*SPEED), (float) (movementStick.yvel*SPEED));
         float shootyStickAngle = secondaryStick.getStickAngle();
 
         //Aiming
@@ -135,7 +135,7 @@ public class GeneratedGameScene extends GameScene {
 
 
         for (Torrent torrent : torrents) {
-            torrent.aimAndShoot(player, this);
+            torrent.aimAndShoot(player, this, delta);
         }
 
         healthText.setText("Health: " + player.health);

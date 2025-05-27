@@ -25,7 +25,7 @@ public class TriggerGameObject extends Sprite {
 
     public TriggerGameObject(float x, float y, float width, float height, Consumer<AGameObject> trigger) {
         this(Textures.WALL, x, y, width, height, trigger);
-        texture.setAlpha(0);
+        setVisible(false);
     }
 
     @Override
