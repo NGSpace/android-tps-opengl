@@ -1,12 +1,11 @@
 {
+  "bounds": {
+    "x": 20,
+    "y": -480,
+    "width": 160,
+    "height": 480
+  },
   "elements": [
-    {
-      "type": "sprite",
-      "x": 0,
-      "y": -500,
-      "width": 20,
-      "height": 500
-    },
     {
       "type": "sprite",
       "x": 0,

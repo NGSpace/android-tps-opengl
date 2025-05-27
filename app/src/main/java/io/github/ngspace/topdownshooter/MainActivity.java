@@ -12,17 +12,61 @@ import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+
 import io.github.ngspace.topdownshooter.renderer.OpenGLActivity;
 import io.github.ngspace.topdownshooter.renderer.renderer.Shaders;
+import io.github.ngspace.topdownshooter.utils.Logcat;
+import io.github.ngspace.topdownshooter.utils.UserData;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static Context globalContext;
+    private FirebaseUser user;
+    private FirebaseDatabase database;
+
+    private ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
+            new FirebaseAuthUIActivityResultContract(),
+            (result) -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Logcat.log("Success");
+                    user = FirebaseAuth.getInstance().getCurrentUser();
+                    database = FirebaseDatabase.getInstance();
+                    UserData.init(this.user, this.database, userData -> {
+
+                        Intent intent = new Intent(this, HomeScreen.class);
+                        intent.putExtra("UserData", userData);
+                        startActivity(intent);
+                    });
+                }
+            });
+
+    private void startSignIn() {
+        Intent signInIntent = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .build();
+
+        signInLauncher.launch(signInIntent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
 
-        globalContext = getApplicationContext();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -54,12 +97,10 @@ public class MainActivity extends AppCompatActivity {
         OpenGLActivity.realWidth = p.x;
         OpenGLActivity.realHeight = p.y;
 
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(()-> {
-            Intent intent = new Intent(this, GeneratedGameScene.class);
-            startActivity(intent);
-        }, 1);//TODO one day change this back to 3000
+        startSignIn();
+    }
 
-        findViewById(R.id.rotatinglogo).animate().setInterpolator(new LinearInterpolator()).setDuration(3500).rotation(410).start();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

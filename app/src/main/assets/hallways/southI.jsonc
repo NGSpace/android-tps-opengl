@@ -4,8 +4,9 @@
     {
       "type": "door",
       "custom": {
+        "blockedChance": 0,
         "canBeExitDoor": false,
-        "genRoomType": "3WaySplit",
+        "genRoomType": "North",
         "genOffsetX": -20,
         "genOffsetY": 0
       },

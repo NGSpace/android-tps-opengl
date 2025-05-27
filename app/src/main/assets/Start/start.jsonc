@@ -1,26 +1,28 @@
 {
+  "bounds": {
+    "x": 20,
+    "y": -480,
+    "width": 480,
+    "height": 480
+  },
   "elements": [
     {
       "type": "sprite",
       "x": 0,
-      "y": 0,
-      "width": 500,
-      "height": 20
-    },
-    {
-      "type": "sprite",
-      "x": 0,
       "y": -500,
       "width": 20,
       "height": 500
     },
     {
       "type": "sprite",
-      "x": 0,
+      "x": 500,
       "y": -500,
       "width": 20,
-      "height": 500
+      "height": 520
     },
+
+    // North wall
+
     {
       "type": "sprite",
       "x": 0,
@@ -35,16 +37,46 @@
       "width": 170,
       "height": 20
     },
+
+    // South wall
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": 0,
+      "width": 170,
+      "height": 20
+    },
+    {
+      "type": "sprite",
+      "x": 330,
+      "y": 0,
+      "width": 170,
+      "height": 20
+    },
+
+    // Start door
+
     {
       "type": "door",
       "custom": {
-        "canBeExitDoor": true,
-        "genRoomType": "Hallway",
+        "blockedChance": 0,
+        "genRoomType": "NorthHallway",
         "genOffsetX": -20,
         "genOffsetY": 0
       },
       "x": 170,
       "y": -500,
+      "width": 160,
+      "height": 20
+    },
+
+    // Exit
+
+    {
+      "type": "exit",
+      "x": 170,
+      "y": 0,
       "width": 160,
       "height": 20
     }

@@ -45,7 +45,12 @@ public class LevelReader {
         Element[] elements = new Element[jsonArray.length()];
         for (int i=0;i<jsonArray.length();i++)
             elements[i] = processElement(jsonArray.getJSONObject(i));
-        return new Room(elements, parent, new Point(offsetx, offsety));
+        Bounds roomBounds = null;
+        if (types.has("bounds")) {
+            JSONObject bounds = types.getJSONObject("bounds");
+            roomBounds = new Bounds(bounds.getInt("x"), bounds.getInt("y"), bounds.getInt("width"), bounds.getInt("height"));
+        }
+        return new Room(elements, parent, new Point(offsetx, offsety), roomBounds);
     }
 
     private Element processElement(JSONObject element) throws JSONException {

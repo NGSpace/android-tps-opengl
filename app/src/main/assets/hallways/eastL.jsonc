@@ -1,0 +1,52 @@
+{
+  "offsetX": 0,
+  "bounds": {
+    "x": -480,
+    "y": -320,
+    "width": 480,
+    "height": 320
+  },
+  "elements": [
+    {
+      "type": "wall",
+      "x": -500,
+      "y": 0,
+      "width": 500,
+      "height": 20
+    },
+    {
+      "type": "wall",
+      "x": -500,
+      "y": -340,
+      "width": 20,
+      "height": 340
+    },
+    {
+      "type": "wall",
+      "x": -320,
+      "y": -340,
+      "width": 20,
+      "height": 170
+    },
+    {
+      "type": "wall",
+      "x": -320,
+      "y": -170,
+      "width": 320,
+      "height": 20
+    },
+    {
+      "type": "door",
+      "custom": {
+        "blockedChance": 0,
+        "genRoomType": "North",
+        "genOffsetX": -20,
+        "genOffsetY": 0
+      },
+      "x": -480,
+      "y": -340,
+      "width": 160,
+      "height": 20
+    }
+  ]
+}

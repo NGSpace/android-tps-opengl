@@ -38,6 +38,7 @@ public class OpenGLSurfaceView extends GLSurfaceView {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override public boolean onTouchEvent(MotionEvent e) {
+        if (e.getPointerCount()>1) return false;
         var viewport = renderer.toViewport((int)e.getX(),(int)e.getY());
         int x = viewport.x;
         int y = viewport.y;

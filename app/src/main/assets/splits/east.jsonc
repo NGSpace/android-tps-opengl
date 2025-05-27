@@ -1,0 +1,58 @@
+{
+  "offsetX": -150,
+  "bounds": {
+    "x": -130,
+    "y": -480,
+    "width": 460,
+    "height": 480
+  },
+  "elements": [
+
+    /// North
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 500,
+      "height": 20
+    },
+
+    /// South
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": 0,
+      "width": 500,
+      "height": 20
+    },
+
+    /// West
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+
+    /// East
+
+    {
+      "type": "sprite",
+      "x": 480,
+      "y": -500,
+      "width": 20,
+      "height": 190
+    },
+    {
+      "type": "sprite",
+      "x": 480,
+      "y": -160,
+      "width": 20,
+      "height": 170
+    }
+  ]
+}

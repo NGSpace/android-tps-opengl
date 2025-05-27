@@ -2,6 +2,7 @@ package io.github.ngspace.topdownshooter.renderer.elements;
 
 import android.opengl.GLES32;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -12,39 +13,47 @@ import io.github.ngspace.topdownshooter.utils.Bounds;
 import io.github.ngspace.topdownshooter.renderer.renderer.GLRenderer;
 import io.github.ngspace.topdownshooter.renderer.renderer.Shaders;
 import io.github.ngspace.topdownshooter.renderer.renderer.TextureInfo;
+import io.github.ngspace.topdownshooter.utils.Logcat;
 
 public class Texture extends Element {
 
-    private TextureInfo texture;
+    protected TextureInfo texture;
 
     //Added for Textures
-    private FloatBuffer mCubeTextureCoordinates;
-    private int mTextureUniformHandle;
-    private int mTextureCoordinateHandle;
+    protected FloatBuffer mCubeTextureCoordinates;
+    protected int mTextureUniformHandle;
+    protected int mTextureCoordinateHandle;
 
-    private float alpha = 1f;
+    protected float alpha = 1f;
 
-    private final int shaderProgram;
-    private FloatBuffer vertexBuffer;
-    private final ShortBuffer drawListBuffer;
+    protected final int shaderProgram;
+    protected FloatBuffer vertexBuffer;
+    protected final ShortBuffer drawListBuffer;
     int mMVPMatrixHandle;
     int mAlphaHandle;
     int mPositionHandle;
 
     // number of coordinates per vertex in this array
     final int COORDS_PER_VERTEX = 2;
-    float[] spriteCoords = { -0.5f,  0.5f,   // top left
+    protected float[] spriteCoords = { -0.5f,  0.5f,   // top left
             -0.5f, -0.5f,   // bottom left
             0.5f, -0.5f,   // bottom right
             0.5f,  0.5f }; //top right
 
-    private final short[] drawOrder = { 0, 1, 2, 0, 2, 3 }; //Order to draw vertices
-    private final int vertexStride = COORDS_PER_VERTEX * 4; //Bytes per vertex
+    protected float[] textureCoordinate = new float[] {
+            0f, 1f,
+            1f, 1f,
+            1f, 0f,
+            0f, 0f,
+    };
 
-    private float x;
-    private float y;
-    private float width;
-    private float height;
+    protected final short[] drawOrder = { 0, 1, 2, 0, 2, 3 }; //Order to draw vertices
+    protected final int vertexStride = COORDS_PER_VERTEX * 4; //Bytes per vertex
+
+    protected float x;
+    protected float y;
+    protected float width;
+    protected float height;
     boolean ispressed = false;
 
     public Texture(TextureInfo texture, float x, float y, float width, float height) {
@@ -69,8 +78,8 @@ public class Texture extends Element {
         GLES32.glBindAttribLocation(shaderProgram, 0, "a_TexCoordinate");
         GLES32.glLinkProgram(shaderProgram);
 
-        mCubeTextureCoordinates = ByteBuffer.allocateDirect(texture.textureCoordinate.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mCubeTextureCoordinates.put(texture.textureCoordinate).position(0);
+        mCubeTextureCoordinates = ByteBuffer.allocateDirect(textureCoordinate.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mCubeTextureCoordinates.put(textureCoordinate).position(0);
     }
 
     public void draw(float[] mvpMatrix) {

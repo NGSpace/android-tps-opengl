@@ -5,15 +5,14 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiPredicate;
 
 import io.github.ngspace.topdownshooter.GeneratedGameScene;
 import io.github.ngspace.topdownshooter.gameobjects.AGameObject;
 import io.github.ngspace.topdownshooter.gameobjects.Sprite;
+import io.github.ngspace.topdownshooter.gameobjects.Torrent;
 import io.github.ngspace.topdownshooter.gameobjects.TriggerGameObject;
 import io.github.ngspace.topdownshooter.renderer.renderer.Textures;
 import io.github.ngspace.topdownshooter.utils.Bounds;
-import io.github.ngspace.topdownshooter.utils.Logcat;
 
 public class LevelGenerator {
     LevelReader reader;
@@ -23,93 +22,95 @@ public class LevelGenerator {
     public LevelGenerator(GeneratedGameScene scene) throws JSONException, IOException {
         reader = new LevelReader(scene);
     }
-    public void generateLevel(GeneratedGameScene scene, String type, int x, int y) {
+    public void generateLevel(GeneratedGameScene scene, String type, int x, int y) throws FailedToGenLevelException {
         GeneratedLevel level = new GeneratedLevel();
         generateRoom(scene, getRandomRoomOfType(type), x, y, level);
-//        for (AGameObject element : level.elements()) {
-////            if (scene.)
-//        }
-        for (AGameObject element : level.elements) {
-            scene.addPhysicsObject(element);
-//            uielem.setVisible(element.visible());
+        if (level.fuelCount<3)
+            throw new FailedToGenLevelException("Fuel count too low: "+level.fuelCount+"!");
+        for (var element : level.elements) {
+            if (element.element() instanceof Torrent torrent) {
+                scene.torrents.add(torrent);
+            }
+            if (element.element() instanceof Sprite sprite&&sprite.getTextureInfo()==Textures.EXIT_DOOR) {
+                scene.exitDoor = element.element();
+            }
+            if (element.physics())
+                scene.addPhysicsObject(element.element());
+            else
+                scene.addObject(element.element());
         }
+        scene.fuelLeftToLeave = level.fuelCount;
     }
-    public void generateRoom(GeneratedGameScene scene, String type, int x, int y, GeneratedLevel level) {
+    public void generateRoom(GeneratedGameScene scene, String type, int x, int y, GeneratedLevel level) throws FailedToGenLevelException {
         generateRoom(scene, getRandomRoomOfType(type), x, y, level);
     }
-    public void generateRoom(GeneratedGameScene scene, Room room, int x, int y, GeneratedLevel level) {
+    public void generateRoom(GeneratedGameScene scene, Room room, int x, int y, GeneratedLevel level) throws FailedToGenLevelException {
         if (room.parentRoomName()!=null) generateRoom(scene, reader.getRoomOfName(room.parentRoomName()), x, y, level);
+        if (room.bounds()!=null) {
+            Bounds roomBounds = room.bounds().add(x, y);
+            for (GeneratedRoom room1 : level.rooms) {
+                if (room1.bounds() != null && roomBounds.intersects(room1.bounds()))
+                    throw new FailedToGenLevelException("Intersecting rooms: " + roomBounds + " and " + room1.bounds());
+            }
+            level.rooms.add(new GeneratedRoom(roomBounds));
+        }
         for (Element element : room.elements()) {
-            var uielem = addElement(scene, element, x + room.offset().x, y + room.offset().y, level);
-            if (uielem==null) continue;
-//            scene.addPhysicsObject(uielem);
-            uielem.setVisible(element.visible());
+            var uielems = addElement(scene, element, x + room.offset().x, y + room.offset().y, level);
+            for (var uielem : uielems) {
+                level.add(uielem);
+                uielem.element().setVisible(element.visible());
+            }
         }
     }
 
-    private AGameObject addElement(GeneratedGameScene scene, Element element, int x, int y, GeneratedLevel level) {
+    private GeneratedElement[] addElement(GeneratedGameScene scene, Element element, int x, int y, GeneratedLevel level) throws FailedToGenLevelException {
         Bounds bounds = element.bounds().add(x, y);
         return switch (element.type()) {
-            case "sprite": {
-                var wall = new Sprite(Textures.STARSET, bounds);
-                level.add(wall);
-                yield wall;
+            case "wall", "sprite": {
+                var wall = new Sprite(Textures.WALL, bounds);
+                yield new GeneratedElement[] {new GeneratedElement(wall, true)};
+            }
+            case "exit": {
+                var scen = scene;
+                var exit = new Sprite(Textures.EXIT_DOOR, bounds) {
+                    @Override
+                    public void collidedWith(AGameObject collider) {
+                        super.collidedWith(collider);
+                        if (!visible&&collider==scen.player)
+                            scen.nextLevel(true);
+                    }
+                };
+                yield new GeneratedElement[] {new GeneratedElement(exit, true)};
+            }
+            case "torrent": {
+                var torrent = new Torrent(bounds.x(), bounds.y());
+                yield new GeneratedElement[] {new GeneratedElement(torrent, true)};
             }
             case "door": {
-                AtomicBoolean b = new AtomicBoolean();
-                String roomType = element.getString("genRoomType");
-                int genOffsetX = element.getInt("genOffsetX");
-                int genOffsetY = element.getInt("genOffsetY");
-                Sprite door = null;
-                if (element.getBoolean("canBeExitDoor") && random.nextBoolean() && !level.hasExitDoor) {
-                    door = new TriggerGameObject(Textures.FUCKOPENGL, bounds, c -> {
-                        if (b.get()) return;
-                        b.set(true);
-                        generateLevel(scene, roomType, (int) bounds.x() + genOffsetX, (int) bounds.y() + genOffsetY);
-                    });
-                    ((TriggerGameObject)door).setSelfDestroyTrigger((c,a)->true);
-                    level.add(door);
-                    level.hasExitDoor = true;
+                boolean blocked = random.nextInt(100) < element.getInt("blockedChance");
 
-                    // Generate next room
-                    generateLevel(scene, roomType, (int) bounds.x() + genOffsetX, (int) bounds.y() + genOffsetY);
+                if (blocked)
+                    yield new GeneratedElement[]{new GeneratedElement(new Sprite(Textures.BLOCK, bounds), true)};
 
-                    yield door;
-                }
                 // Generate next room
-                generateLevel(scene, roomType, (int) bounds.x() + genOffsetX, (int) bounds.y() + genOffsetY);
-
-                if (!level.keys.isEmpty()&&random.nextInt(10)>0) {
-                    KeyElement key = level.keys.remove();
-                    level.add(key.element());
-                }
-                door = new Sprite(Textures.FUCKOPENGL, bounds);
-                door.setTrigger(true);
-                level.add(door);
-                yield door;
+                generateRoom(scene, element.getString("genRoomType"),
+                        (int) bounds.x() + element.getInt("genOffsetX"),
+                        (int) bounds.y() + element.getInt("genOffsetY"), level);
+                yield new GeneratedElement[] {};
             }
-            case "key": {
-                int keyID = keys++;
-                TriggerGameObject key = new TriggerGameObject(Textures.STARSET, bounds, aGameObject -> {
-                    if (aGameObject==scene.player)
-                        scene.keys.add(keyID);
-                });
-                key.setSelfDestroyTrigger((c,a)->true);
-                key.setTrigger(true);
-                level.keys.add(new KeyElement(key, keyID));
-                yield key;
-            }
-            case "startTrigger": {
-                TriggerGameObject trigger = new TriggerGameObject(Textures.STARSET, bounds, aGameObject -> {
+            case "fuel": {
+                TriggerGameObject fuel = new TriggerGameObject(Textures.FUEL, bounds, aGameObject -> {
                     if (aGameObject==scene.player) {
-                        //TODO ungenerate room and generate start
-//                        generateRoom(scene, "Start", )
+                        scene.fuelLeftToLeave--;
+                        if (scene.fuelLeftToLeave==0) {
+                            scene.exitDoor.setVisible(false);
+                        }
                     }
                 });
-                trigger.setSelfDestroyTrigger((c,a)->true);
-                trigger.setTrigger(true);
-                level.add(trigger);
-                yield trigger;
+                fuel.setSelfDestroyTrigger((c,a)->true);
+                fuel.setTrigger(true);
+                level.fuelCount++;
+                yield new GeneratedElement[] {new GeneratedElement(fuel, true)};
             }
             default:
                 throw new IllegalStateException("Unexpected value: " + element.type());
@@ -120,6 +121,4 @@ public class LevelGenerator {
         var rooms = reader.getRoomsOfType(type);
         return rooms[random.nextInt(rooms.length)];
     }
-
-    public static record KeyElement(AGameObject element, int keyID) {}
 }

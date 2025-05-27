@@ -7,14 +7,19 @@ import java.util.List;
 import java.util.Queue;
 
 import io.github.ngspace.topdownshooter.gameobjects.AGameObject;
+import io.github.ngspace.topdownshooter.gameobjects.Sprite;
 
 public class GeneratedLevel {
 
-    List<AGameObject> elements = new ArrayList<>();
-    Queue<LevelGenerator.KeyElement> keys = new ArrayDeque<>();
-    boolean hasExitDoor = false;
+    public int fuelCount = 0;
+    List<GeneratedElement> elements = new ArrayList<>();
+    List<GeneratedRoom> rooms = new ArrayList<>();
 
     public void add(AGameObject element) {
-        elements.add(element);
+        add(element, true);
     }
+    public void add(AGameObject element, boolean physics) {
+        elements.add(new GeneratedElement(element, physics));
+    }
+    public void add(GeneratedElement element) {elements.add(element);}
 }

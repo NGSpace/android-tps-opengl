@@ -1,0 +1,12 @@
+{
+  "parent": "splits/east.jsonc",
+  "elements": [
+    {
+      "type": "fuel",
+      "x": -10,
+      "y": -285,
+      "width": 100,
+      "height": 100
+    }
+  ]
+}

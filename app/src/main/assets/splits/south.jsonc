@@ -1,0 +1,52 @@
+{
+  "offsetX": -150,
+  "parent": "templates/4doors.jsonc",
+  "elements": [
+//    {
+//      "type": "key",
+//      "x": 50,
+//      "y": 50,
+//      "width": 50,
+//      "height": 50
+//    },
+//    {
+//      "type": "door",
+//      "custom": {
+//        "blockedChance": 20,
+//        "genRoomType": "North",
+//        "genOffsetX": -20,
+//        "genOffsetY": 0
+//      },
+//      "x": 170,
+//      "y": -500,
+//      "width": 160,
+//      "height": 20
+//    },
+    {
+      "type": "door",
+      "custom": {
+        "blockedChance": 40,
+        "genRoomType": "WestHallway",
+        "genOffsetX": 0,
+        "genOffsetY": 170
+      },
+      "x": 0,
+      "y": -330,
+      "width": 20,
+      "height": 170
+    },
+    {
+      "type": "door",
+      "custom": {
+        "blockedChance": 80,
+        "genRoomType": "NorthHallway",
+        "genOffsetX": -20,
+        "genOffsetY": 0
+      },
+      "x": 170,
+      "y": -500,
+      "width": 160,
+      "height": 20
+    }
+  ]
+}

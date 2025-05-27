@@ -1,0 +1,19 @@
+{
+  "parent": "east/freebie.jsonc",
+  "elements": [
+    {
+      "type": "torrent",
+      "x": -100,
+      "y": -200,
+      "width": 20,
+      "height": 20
+    },
+    {
+      "type": "torrent",
+      "x": -100,
+      "y": -400,
+      "width": 20,
+      "height": 20
+    }
+  ]
+}

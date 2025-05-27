@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1744357582",
+    "firebase_url": "https://androidtds2-default-rtdb.firebaseio.com",
+    "project_id": "androidtds2",
+    "storage_bucket": "androidtds2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1744357582:android:5c4f2967477c329066e89f",
+        "android_client_info": {
+          "package_name": "io.github.ngspace.topdownshooter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1744357582-rtferq16lvnaqg5rhbfg7hfqk2jjbn3f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_I_n7gpTj5wcV_bPCwwkddUmFaT20FTM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1744357582-rtferq16lvnaqg5rhbfg7hfqk2jjbn3f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

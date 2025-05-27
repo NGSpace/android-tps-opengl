@@ -1,16 +1,32 @@
 {
   "Templates": [
-    "templates/3doors.jsonc",
-    "templates/hallway.json"
+    "templates/4doors.jsonc",
+    "templates/hallway.json",
+    "splits/east.jsonc"
   ],
   "Start": [
-    "Start/start.json"
+    "Start/start.jsonc"
   ],
-  "Hallway": [
-//    "hallway.json",
-    "Start/StartHallway.jsonc"
+  "North": [
+    "splits/south.jsonc",
+    "north_enemies.jsonc",
+    "north_enemies.jsonc"
   ],
-  "3WaySplit": [
-    "room.jsonc"
+  "NorthHallway": [
+    "hallways/southI.jsonc"
+  ],
+  "West": [
+    "east/freebie.jsonc",
+    "east/enemies.jsonc",
+    "east/enemies.jsonc",
+    "east/enemies.jsonc",
+    "east/enemies.jsonc",
+    "east/enemies.jsonc",
+    "east/enemies.jsonc"
+  ],
+  "WestHallway": [
+    "hallways/eastL.jsonc",
+    "hallways/east-.jsonc",
+    "hallways/east-.jsonc"
   ]
 }

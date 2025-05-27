@@ -34,7 +34,6 @@ import java.util.function.Consumer;
 
 import io.github.ngspace.topdownshooter.renderer.OpenGLSurfaceView;
 import io.github.ngspace.topdownshooter.renderer.elements.Element;
-import io.github.ngspace.topdownshooter.renderer.elements.PostProc;
 
 /**
  * Provides drawing instructions for a GLSurfaceView object. This class
@@ -57,20 +56,21 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
     final OpenGLSurfaceView context;
     public Camera camera = new Camera();
     public Element background;
-    public PostProc postProcessing;
 
     private Instant lastFrame = Instant.now();
     private double defaultDelta;
     private Consumer<GLRenderer> creationListener;
+    static boolean InitalStart = true;
 
     public GLRenderer(OpenGLSurfaceView context) {this.context = context;}
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         GLES32.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        Textures.loadTextures(context.getContext());
-        defaultDelta = 1/context.getDisplay().getRefreshRate();
 
+        Textures.loadTextures(context.getContext());
+
+        defaultDelta = 1/context.getDisplay().getRefreshRate();
         creationListener.accept(this);
     }
 
@@ -107,9 +107,11 @@ public class GLRenderer implements android.opengl.GLSurfaceView.Renderer {
         // Draw background
         if (background!=null) background.render(hudMatrix);
         // Draw elements
-        for (Element element : elements) element.render(Arrays.copyOf(mMVPMatrix,mMVPMatrix.length));
-        // Draw Polengthst-Processing effects
-        if (postProcessing!=null) postProcessing.render(hudMatrix);
+        var camBounds = camera.getBounds();
+        for (Element element : elements) {
+            if (element.getBounds().intersects(camBounds))
+                element.render(Arrays.copyOf(mMVPMatrix,mMVPMatrix.length));
+        }
         // Draw Hud
         for (Element element : topelements) element.render(Arrays.copyOf(hudMatrix,hudMatrix.length));
     }

@@ -1,0 +1,83 @@
+{
+
+  "offsetX": -150,
+  "bounds": {
+    "x": -130,
+    "y": -480,
+    "width": 460,
+    "height": 480
+  },
+  "elements": [
+
+    /// North
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 500,
+      "height": 20
+    },
+
+    /// South
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": 0,
+      "width": 170,
+      "height": 20
+    },
+    {
+      "type": "sprite",
+      "x": 330,
+      "y": 0,
+      "width": 170,
+      "height": 20
+    },
+
+    /// West
+
+    {
+      "type": "sprite",
+      "x": 0,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+
+    /// East
+
+    {
+      "type": "sprite",
+      "x": 480,
+      "y": -500,
+      "width": 20,
+      "height": 500
+    },
+
+
+    {
+      "type": "torrent",
+      "x": 100,
+      "y": -400,
+      "width": 20,
+      "height": 20
+    },
+    {
+      "type": "torrent",
+      "x": 300,
+      "y": -400,
+      "width": 20,
+      "height": 20
+    },
+
+    {
+      "type": "fuel",
+      "x": 185,
+      "y": -400,
+      "width": 100,
+      "height": 100
+    }
+  ]
+}

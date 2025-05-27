@@ -24,4 +24,11 @@ public class Sprite extends AGameObject {
     @Override public void setBounds(Bounds bounds) {super.setBounds(bounds);texture.setBounds(bounds);}
     @Override public void setAngle(float angle) {super.setAngle(angle);texture.setAngle(angle);}
     @Override public void setVisible(boolean visible) {super.setVisible(visible);texture.setVisible(visible);}
+
+    public void setAlpha(float alpha) {texture.setAlpha(alpha);}
+    public float getAlpha() {return texture.getAlpha();}
+
+    public TextureInfo getTextureInfo() {
+        return texture.getTexture();
+    }
 }

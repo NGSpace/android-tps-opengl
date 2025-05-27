@@ -7,6 +7,8 @@ import android.opengl.Matrix;
 import io.github.ngspace.topdownshooter.renderer.OpenGLActivity;
 import io.github.ngspace.topdownshooter.renderer.OpenGLSurfaceView;
 import io.github.ngspace.topdownshooter.renderer.elements.Element;
+import io.github.ngspace.topdownshooter.utils.Bounds;
+import io.github.ngspace.topdownshooter.utils.Logcat;
 
 public class Camera {
 
@@ -16,6 +18,7 @@ public class Camera {
     private float x = 0;
     private float y = 0;
     private Element center = null;
+    private Bounds bounds;
 
     public Camera() {setProjection(0,0);}
 
@@ -27,6 +30,7 @@ public class Camera {
     public void setProjection(float x, float y) {
         this.x=x;
         this.y=y;
+        bounds = new Bounds(-x,-y,1920,1080);
         Matrix.frustumM(projectionMatrix, 0, -x, 1920f-x, -1080+y, y, 3f, 7);
         Matrix.frustumM(hudProjectionMatrix, 0, 0, 1920f, -1080, 0, 3f, 7);//, 0, -960f, 0, -540f, 0f, 3f, 7);
     }
@@ -49,9 +53,13 @@ public class Camera {
     public void updateViewport(OpenGLSurfaceView context) {
         // Adjust the viewport based on screen size
         float height1 = context.getHeight();
+        Logcat.log(height1);
         float relation = height1/1080;
         viewportBuffer = (int) (context.getWidth() - (1920*relation));
         GLES32.glViewport(viewportBuffer/2,0, (int) (1920*relation), (int) (1080*relation));
+    }
+    public Bounds getBounds() {
+        return bounds;
     }
 
     public float getX() {return x;}

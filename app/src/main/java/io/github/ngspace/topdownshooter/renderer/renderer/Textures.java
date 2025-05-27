@@ -11,26 +11,25 @@ import io.github.ngspace.topdownshooter.R;
 
 public class Textures {
 
-    public static int length = 10;
+    public static int length = 20;
 
-    public static TextureInfo SIMLEY;
-    public static TextureInfo FEDORA;
-    public static TextureInfo STARSET;
-    public static TextureInfo FUCKOPENGL;
-    public static TextureInfo ANCHOR;
+    public static TextureInfo PLAYER;
+    public static TextureInfo FUEL;
+    public static TextureInfo EXIT_DOOR;
     public static TextureInfo GRAYCIRCLE;
     public static TextureInfo CIRCLE;
     public static TextureInfo SHOOTING_OVERLAY;
+    public static TextureInfo TEXT;
+    public static TextureInfo WALL;
+    public static TextureInfo TORRENT;
+    public static TextureInfo BLOCK;
+    public static TextureInfo GENERATING;
 
     static int[] textureHandle = null;
 
     static int textureIndex = 0;
 
     public static TextureInfo loadTexture(Context context, int resourceId) {
-        if (textureHandle==null) {
-            textureHandle = new int[length];
-            GLES32.glGenTextures(length, textureHandle, 0);
-        }
         Log.i("GL ERROR",""+GLES32.glGetError());
 
         if (textureHandle[textureIndex] != 0)
@@ -67,18 +66,25 @@ public class Textures {
         return info;
     }
 
-    private static boolean hasLoaded = false;
-
     public static void loadTextures(Context applicationContext) {
-        if (hasLoaded) return;
-        hasLoaded = true;
-        SIMLEY = loadTexture(applicationContext, R.drawable.simley);
-        FEDORA = loadTexture(applicationContext, R.drawable.fedora);
-        STARSET = loadTexture(applicationContext, R.drawable.starset);
-        FUCKOPENGL = loadTexture(applicationContext, R.drawable.fuckopengl);
-        ANCHOR = loadTexture(applicationContext, R.drawable.anchor);
+        if (textureHandle!=null) {
+            GLES32.glDeleteTextures(length, textureHandle, 0);
+            textureIndex = 0;
+        }
+
+        textureHandle = new int[length];
+        GLES32.glGenTextures(length, textureHandle, 0);
+
+        PLAYER = loadTexture(applicationContext, R.drawable.player);
+        FUEL = loadTexture(applicationContext, R.drawable.fuel);
+        EXIT_DOOR = loadTexture(applicationContext, R.drawable.door_closed);
         GRAYCIRCLE = loadTexture(applicationContext, R.drawable.graycircle);
         CIRCLE = loadTexture(applicationContext, R.drawable.oriented_circle);
         SHOOTING_OVERLAY = loadTexture(applicationContext, R.drawable.shooting_overlay);
+        TEXT = loadTexture(applicationContext, R.drawable.text);
+        WALL = loadTexture(applicationContext, R.drawable.wall);
+        TORRENT = loadTexture(applicationContext, R.drawable.torrent);
+        BLOCK = loadTexture(applicationContext, R.drawable.block);
+        GENERATING = loadTexture(applicationContext, R.drawable.generating);
     }
 }

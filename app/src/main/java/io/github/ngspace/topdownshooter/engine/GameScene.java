@@ -10,6 +10,7 @@ import java.util.Stack;
 
 import io.github.ngspace.topdownshooter.gameobjects.AGameObject;
 import io.github.ngspace.topdownshooter.renderer.OpenGLActivity;
+import io.github.ngspace.topdownshooter.utils.Logcat;
 
 public abstract class GameScene extends OpenGLActivity {
 
