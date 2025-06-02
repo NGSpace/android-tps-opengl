@@ -55,8 +55,6 @@ public class NextLevel extends AppCompatActivity {
             return;
         }
 
-        ((TextView) findViewById(R.id.NextLevelText)).setText("Game over!");
-
         // Delete data
 
         var temp = usr.firebaseUid;
