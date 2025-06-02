@@ -27,8 +27,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle("Reminder")
-                .setContentText("This is your scheduled notification!")
+                .setContentTitle("Play my game")
+                .setContentText("pls")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
 
