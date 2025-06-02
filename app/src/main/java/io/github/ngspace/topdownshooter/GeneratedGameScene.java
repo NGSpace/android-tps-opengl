@@ -139,7 +139,7 @@ public class GeneratedGameScene extends GameScene {
         }
 
         healthText.setText("Health: " + player.health);
-        fuelText.setText("Fuel: " + fuelLeftToLeave + "/" + totalFuel);
+        fuelText.setText("Fuel left: " + fuelLeftToLeave);
     }
     float clamp(float value, float min, float max) {return Math.max(min, Math.min(max, value));}
 

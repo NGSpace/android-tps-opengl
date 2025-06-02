@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "io.github.ngspace.topdownshooter"
-        minSdk = 32
+        minSdk = 34
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

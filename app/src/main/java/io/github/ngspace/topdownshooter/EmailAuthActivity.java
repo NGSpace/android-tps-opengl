@@ -1,8 +1,11 @@
 package io.github.ngspace.topdownshooter;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,6 +14,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,15 +32,19 @@ public class EmailAuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Calendar calendar = Calendar.getInstance();
-
-        AlarmManager am = (AlarmManager) EmailAuthActivity.this.getSystemService(EmailAuthActivity.ALARM_SERVICE);
-
-        Intent intent = new Intent(this, EmailAuthActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_MUTABLE);
-        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingIntent);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.USE_EXACT_ALARM)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.USE_EXACT_ALARM}, 1);
+            }
+        }
+        scheduleNotification(86_400_000);
         setContentView(R.layout.activity_email_auth);
 
         // Ensure FirebaseApp is initialized
@@ -107,4 +116,21 @@ public class EmailAuthActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LoadUserActivity.class);
         startActivity(intent);
     }
+
+    @SuppressLint("ScheduleExactAlarm")
+    public void scheduleNotification(long delayMillis) {
+        Intent intent = new Intent(this, NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
+        long triggerAtMillis = System.currentTimeMillis() + delayMillis;
+
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+    }
+
 }
