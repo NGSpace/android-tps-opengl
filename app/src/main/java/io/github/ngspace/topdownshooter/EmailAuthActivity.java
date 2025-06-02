@@ -1,5 +1,7 @@
 package io.github.ngspace.topdownshooter;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,6 +16,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Calendar;
+
 public class EmailAuthActivity extends AppCompatActivity {
     private static final String TAG = "EmailAuthActivity";
     private EditText etEmail, etPassword;
@@ -23,6 +27,15 @@ public class EmailAuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Calendar calendar = Calendar.getInstance();
+
+        AlarmManager am = (AlarmManager) EmailAuthActivity.this.getSystemService(EmailAuthActivity.ALARM_SERVICE);
+
+        Intent intent = new Intent(this, EmailAuthActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_MUTABLE);
+        am.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pendingIntent);
+
         setContentView(R.layout.activity_email_auth);
 
         // Ensure FirebaseApp is initialized
